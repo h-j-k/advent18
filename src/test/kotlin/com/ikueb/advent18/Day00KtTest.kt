@@ -4,7 +4,7 @@ import com.ikueb.advent18.Day00.sum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class Day00KtTest {
+internal class Day00KtTest {
 
     @Test
     fun canAdd() {
@@ -13,11 +13,11 @@ class Day00KtTest {
 
     @Test
     fun canGetLines() {
-        assertThat(getInput(Day00.javaClass)).contains("Line 1", "Line 2")
+        assertThat(getInput("Day00")).contains("Line 1", "Line 2")
     }
 
     @Test
     fun canGetSingleLine() {
-        assertThat(getSingleInput(Day00.javaClass)).contains("Line 1")
+        assertThat(getSingleInput("Day00")).contains("Line 1")
     }
 }
