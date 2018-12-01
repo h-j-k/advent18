@@ -4,7 +4,7 @@ import com.ikueb.advent18.Day00.sum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class Day00KtTest {
+internal class Day00Test {
 
     @Test
     fun canAdd() {
