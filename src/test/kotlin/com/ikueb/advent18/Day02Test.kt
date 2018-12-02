@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.Day02.getChecksum
+import com.ikueb.advent18.Day02.getCommonLetters
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 

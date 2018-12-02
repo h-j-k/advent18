@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.Day01.repeatingFrequencyTwice
+import com.ikueb.advent18.Day01.resultingFrequency
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
