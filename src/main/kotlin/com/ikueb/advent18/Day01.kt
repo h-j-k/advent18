@@ -1,8 +1,6 @@
 package com.ikueb.advent18
 
-fun resultingFrequency(input: List<String>): Int {
-    return input.sumBy { it.toInt() }
-}
+fun resultingFrequency(input: List<String>) = input.sumBy { it.toInt() }
 
 fun repeatingFrequencyTwice(input: List<String>): Int {
     val copy = input.map { it.toInt() }
