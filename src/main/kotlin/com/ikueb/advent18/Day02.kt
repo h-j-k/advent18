@@ -2,16 +2,10 @@ package com.ikueb.advent18
 
 object Day02 {
     fun getChecksum(input: List<String>) = input
-            .map { split(it) }
+            .map { word -> word.groupingBy { it }.eachCount() }
+            .map { Pair(it.containsValue(2).toInt(), it.containsValue(3).toInt()) }
             .reduce { a, b -> Pair(a.first + b.first, a.second + b.second) }
             .let { it.first * it.second }
-
-    private fun split(word: String): Pair<Int, Int> {
-        val counts = word
-                .groupingBy { it }
-                .eachCount()
-        return Pair(counts.containsValue(2).toInt(), counts.containsValue(3).toInt())
-    }
 
     private fun Boolean.toInt() = if (this) 1 else 0
 
