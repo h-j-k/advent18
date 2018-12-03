@@ -33,7 +33,9 @@ object Day02 {
             if (a[i] != b[i]) {
                 differenceIndex = i
                 count--
-                if (count < 0) return null
+                if (count < 0) {
+                    return null
+                }
             }
         }
         return a.substring(0, differenceIndex) + a.substring(differenceIndex + 1)
