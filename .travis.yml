@@ -1,6 +1,6 @@
 dist: trusty
 addons:
-  sonarqube:
+  sonarcloud:
     organization: "h-j-k-github"
 language: java
 jdk:
