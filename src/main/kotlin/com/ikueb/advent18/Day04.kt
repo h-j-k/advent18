@@ -7,10 +7,23 @@ object Day04 {
     private const val PATTERN = "\\[1518-(..)-(..) (..):(..)\\] (.*)"
 
     fun strategyOne(input: List<String>): Int {
+        return mapGuardsToNaps(input)
+                .maxBy { g -> g.value.sumBy { it.last - it.first + 1 } }!!
+                .let { it.key * mostCommon(it.value).first }
+    }
+
+    fun strategyTwo(input: List<String>): Int {
+        return mapGuardsToNaps(input)
+                .mapValues { mostCommon(it.value) }
+                .maxBy { it.value.second }!!
+                .let { it.key * it.value.first }
+    }
+
+    private fun mapGuardsToNaps(input: List<String>): Map<Int, Set<IntRange>> {
         val logs = input.parseWith(PATTERN) { (month, day, hour, minute, entry) ->
             Log(LocalDateTime.of(2018, month.toInt(), day.toInt(), hour.toInt(), minute.toInt()), entry)
         }.sorted()
-        val guards = mutableMapOf<Int, Set<IntRange>>()
+        val results = mutableMapOf<Int, Set<IntRange>>()
         var currentGuard = -1
         var asleepAt = -1
         for (log in logs) {
@@ -23,19 +36,15 @@ object Day04 {
                 continue
             }
             if (log.isAwakeEntry) {
-                guards.merge(currentGuard, setOf(asleepAt..(log.timestamp.minute - 1))) { a, b -> a.plus(b) }
+                results.merge(currentGuard, setOf(asleepAt..(log.timestamp.minute - 1))) { a, b -> a.plus(b) }
             }
         }
-        return guards.maxBy { g -> g.value.sumBy { it.last - it.first + 1 } }!!
-                .let { it.key * mostCommon(it.value) }
-
+        return results
     }
 
-    private fun mostCommon(set: Set<IntRange>): Int {
-        set.flatten().groupingBy { it }.eachCount().forEach { println(it) }
-        return set.flatten().groupingBy { it }.eachCount().maxBy { it.value }!!.key
+    private fun mostCommon(set: Set<IntRange>): Pair<Int, Int> {
+        return set.flatten().groupingBy { it }.eachCount().maxBy { it.value }!!.toPair()
     }
-
 }
 
 data class Log(val timestamp: LocalDateTime, val entry: String) : Comparable<Log> {

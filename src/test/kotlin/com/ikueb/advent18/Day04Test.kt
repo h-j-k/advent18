@@ -1,6 +1,7 @@
 package com.ikueb.advent18
 
 import com.ikueb.advent18.Day04.strategyOne
+import com.ikueb.advent18.Day04.strategyTwo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,6 +15,16 @@ internal class Day04Test {
     @Test
     fun partOne() {
         assertThat(strategyOne(getInput("Day04"))).isEqualTo(12169)
+    }
+
+    @Test
+    fun partTwoExample() {
+        assertThat(strategyTwo(example)).isEqualTo(4455)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(strategyTwo(getInput("Day04"))).isEqualTo(16164)
     }
 
     private val example = listOf(
