@@ -1,36 +1,36 @@
 package com.ikueb.advent18
 
+private typealias Result = Pair<List<Claim>, Map<Point, Set<Claim>>>
+
 object Day03 {
 
-    fun getOverlappingRegions(input: List<String>): Int {
-        return getPointCounts(input.map { parse(it) })
-                .filter { it.value >= 2 }
-                .count()
-    }
+    private const val PATTERN = "#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)"
+
+    fun getOverlappingRegions(input: List<String>) =
+            parseAndFindOverlappingPoints(input).second.count()
 
     fun getNonOverlappingId(input: List<String>): Int {
-        val claims = input.map { parse(it) }
-        val overlaps = getPointCounts(claims)
-                .filter { it.value >= 2 }
-        return claims.find { claim ->
-            overlaps.keys.intersect(claim.getPoints()).isEmpty()
-        }!!.id
+        val (claims, overlaps) = parseAndFindOverlappingPoints(input)
+        val overlappingIds = overlaps.flatMapTo(mutableSetOf()) { it.value }
+        return claims.find { it -> !overlappingIds.contains(it) }!!.id
     }
 
-    private fun getPointCounts(input: List<Claim>): Map<Point, Int> = input
-            .flatMap { it.getPoints() }
-            .groupingBy { it }
-            .eachCount()
-}
-
-private val REGEX = "#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)".toRegex()
-
-private fun parse(input: String) = REGEX.find(input)!!.destructured
-        .let { (id, x, y, xSize, ySize) ->
+    private fun parseAndFindOverlappingPoints(input: List<String>): Result {
+        val claims = input.parseWith(PATTERN) { (id, x, y, xSize, ySize) ->
             Claim(id.toInt(), x.toInt(), y.toInt(), xSize.toInt(), ySize.toInt())
         }
+        return claims to getPointCounts(claims).filter { it.value.size >= 2 }
+    }
 
-data class Claim(val id: Int, val x: Int, val y: Int, val xSize: Int, val ySize: Int) {
+    private fun getPointCounts(input: List<Claim>): Map<Point, Set<Claim>> =
+            input.map { claim -> claim.getPoints().associateTo(mutableMapOf()) { it to setOf(claim) } }
+                    .reduce { a, b -> a.collate(b) { x, y -> x.plus(y) } }
+}
+
+private fun <K, V> MutableMap<K, V>.collate(other: Map<K, V>, reducer: (V, V) -> V): MutableMap<K, V> =
+        this.apply { other.forEach { merge(it.key, it.value, reducer) } }
+
+private data class Claim(val id: Int, val x: Int, val y: Int, val xSize: Int, val ySize: Int) {
     private fun getXRange() = x..(x + xSize - 1)
 
     private fun getYRange() = y..(y + ySize - 1)
@@ -40,4 +40,4 @@ data class Claim(val id: Int, val x: Int, val y: Int, val xSize: Int, val ySize:
             .toSet()
 }
 
-data class Point(val x: Int, val y: Int)
+private data class Point(val x: Int, val y: Int)
