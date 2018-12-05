@@ -1,8 +1,16 @@
 package com.ikueb.advent18
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+
 object Day05 {
 
     fun getResultingLength(input: String) = process(input).trim().length
+
+    fun getShortestPossible(input: String) = CharRange('a', 'z')
+            .map { input.replace(it.toString(), "", true) }
+            .parallelMap { process(it) }
+            .minBy { it.length }!!.length
 
     private fun process(input: String): String {
         if (input.length < 2) {
@@ -39,4 +47,8 @@ object Day05 {
     }
 
     private fun Char.isOppositeAscii(other: Char) = Math.abs(toInt() - other.toInt()) == 32
+
+    private fun <T, R> Iterable<T>.parallelMap(mapper: suspend (T) -> R): List<R> = runBlocking {
+        map { async { mapper(it) } }.map { it.await() }
+    }
 }
