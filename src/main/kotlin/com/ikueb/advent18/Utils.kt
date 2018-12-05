@@ -5,3 +5,6 @@ inline fun <T> String.parseWith(input: CharSequence, mapper: (MatchResult.Destru
 
 inline fun <T> List<CharSequence>.parseWith(pattern: String, mapper: (MatchResult.Destructured) -> T): List<T> =
         map { pattern.parseWith(it, mapper) }
+
+fun <K, V> MutableMap<K, Set<V>>.mergeSetValues(key: K, value: V) =
+        merge(key, setOf(value)) { a, b -> a.plus(b) }

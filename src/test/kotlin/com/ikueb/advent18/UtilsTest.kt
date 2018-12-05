@@ -3,7 +3,7 @@ package com.ikueb.advent18
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ParseUtilsTest {
+internal class UtilsTest {
 
     @Test
     fun canParseFromString() {
@@ -15,6 +15,15 @@ internal class ParseUtilsTest {
     fun canParseFromList() {
         val actual = listOf("1,2").parseWith("(\\d+),(\\d+)") { (x, y) -> Point(x.toInt(), y.toInt()) }
         assertThat(actual).contains(Point(1, 2))
+    }
+
+    @Test
+    fun canMergeSetValues() {
+        val map = mutableMapOf<String, Set<Point>>()
+        map.mergeSetValues("a", Point(1, 2))
+        map.mergeSetValues("a", Point(1, 2))
+        map.mergeSetValues("a", Point(3, 4))
+        assertThat(map).isEqualTo(mapOf("a" to setOf(Point(1, 2), Point(3, 4))))
     }
 }
 

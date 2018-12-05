@@ -2,6 +2,7 @@ package com.ikueb.advent18
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.properties.Delegates.notNull
 
 object Day04 {
 
@@ -22,24 +23,23 @@ object Day04 {
 
     private fun mapGuardsToNaps(input: List<String>): Map<Int, Set<IntRange>> {
         val results = mutableMapOf<Int, Set<IntRange>>()
-        var guard = -1
-        var asleepAt = -1
+        var guard: Int by notNull()
+        var asleepAt: Int by notNull()
         input.parseWith("\\[(.*)\\] (.*)") { (timestamp, entry) ->
             Log(LocalDateTime.parse(timestamp, PARSER), entry)
         }.sorted().forEach { log ->
             when {
                 log.guardEntry != null -> guard = log.guardEntry
                 log.isAsleepEntry -> asleepAt = log.minute
-                log.isAwakeEntry -> results.merge(
-                        guard, setOf(asleepAt..(log.minute - 1))) { a, b -> a.plus(b) }
+                log.isAwakeEntry -> results.mergeSetValues(guard, asleepAt..(log.minute - 1))
             }
         }
         return results
     }
-}
 
-private fun mostCommon(set: Set<IntRange>): Map.Entry<Int, Int> {
-    return set.flatten().groupingBy { it }.eachCount().maxBy { it.value }!!
+    private fun mostCommon(set: Set<IntRange>) =
+            set.flatten().groupingBy { it }.eachCount().maxBy { it.value }!!
+
 }
 
 data class Log(val timestamp: LocalDateTime, val entry: String) : Comparable<Log> {
