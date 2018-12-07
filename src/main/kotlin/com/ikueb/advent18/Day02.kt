@@ -13,7 +13,7 @@ object Day02 {
         val sums = mutableMapOf<Int, List<String>>()
         for (current in input) {
             val currentSum = current.sumBy { it.toInt() }
-            val found = sums.filter { Math.abs(currentSum - it.key) <= 25 }
+            val found = sums.filterKeys { Math.abs(currentSum - it) <= 25 }
                     .flatMap { it.value }
                     .map { getCandidateResult(current, it) }
                     .find { it != null }

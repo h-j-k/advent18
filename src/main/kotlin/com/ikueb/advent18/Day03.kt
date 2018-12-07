@@ -16,7 +16,7 @@ object Day03 {
     private fun parseAndFindOverlappingPoints(input: List<String>) =
             input.parseWith(PATTERN) { (id, x, y, xSize, ySize) ->
                 Claim(id.toInt(), x.toInt(), y.toInt(), xSize.toInt(), ySize.toInt())
-            }.let { it to getPointCounts(it).filter { points -> points.value.size >= 2 } }
+            }.let { claims -> claims to getPointCounts(claims).filterValues { it.size >= 2 } }
 
     private fun getPointCounts(input: List<Claim>) =
             input.map { claim -> claim.getPoints().associateTo(mutableMapOf()) { it to setOf(claim) } }
