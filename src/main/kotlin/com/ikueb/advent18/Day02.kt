@@ -10,7 +10,7 @@ object Day02 {
     private fun Boolean.toInt() = if (this) 1 else 0
 
     fun getCommonLetters(input: List<String>): String {
-        val sums = mutableMapOf<Int, List<String>>()
+        val sums = mutableMapOf<Int, Set<String>>()
         for (current in input) {
             val currentSum = current.sumBy { it.toInt() }
             val found = sums.filterKeys { Math.abs(currentSum - it) <= 25 }
@@ -20,7 +20,7 @@ object Day02 {
             if (found != null) {
                 return found
             } else {
-                sums.merge(currentSum, listOf(current)) { a, b -> a.plus(b) }
+                sums.mergeSetValues(currentSum, current)
             }
         }
         throw IllegalStateException("No candidates found")

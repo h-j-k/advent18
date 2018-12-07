@@ -9,14 +9,14 @@ object Day06 {
         val boundaries = getBoundaries(points)
         return generatePoints(boundaries)
                 .associateWith { point ->
-                    points.associateWith { it.manhattanDistance(point) }
+                    points.associateWith(point::manhattanDistance)
                             .flip()
                             .minBy { it.key }
                             .let { if (it?.value?.size == 1) it.value[0] else null }
                 }
                 .filterValues { it != null }
                 .flip()
-                .filter { (_, closest) ->
+                .filterValues { closest ->
                     closest.none { boundaries.let { (min, max) -> min.on(it) || max.on(it) } }
                 }
                 .map { it.value.size }
@@ -26,9 +26,7 @@ object Day06 {
     fun getLargestRegionWithManhattanDistanceSumLessThan(input: List<String>, sum: Int): Int {
         val points = input.parseWith("(\\d+), (\\d+)") { (x, y) -> Point(x, y) }
         return generatePoints(getBoundaries(points))
-                .associateWith { point ->
-                    points.sumBy { it.manhattanDistance(point) }
-                }
+                .associateWith { point -> points.sumBy(point::manhattanDistance) }
                 .filterValues { it < sum }
                 .size
     }
