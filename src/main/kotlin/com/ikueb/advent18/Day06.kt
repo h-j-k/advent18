@@ -2,14 +2,12 @@ package com.ikueb.advent18
 
 import kotlin.properties.Delegates.vetoable
 
-typealias Boundary = Pair<Point, Point>
-
 object Day06 {
 
     fun getLargestDefiniteArea(input: List<String>): Int {
         val points = input.parseWith("(\\d+), (\\d+)") { (x, y) -> Point(x, y) }
         val boundary = getBoundary(points)
-        return generatePoints(boundary)
+        return boundary.getEnclosing()
                 .associateWith { point ->
                     points.associateWith(point::manhattanDistance)
                             .flip()
@@ -25,7 +23,7 @@ object Day06 {
 
     fun getLargestRegionWithManhattanDistanceSumLessThan(input: List<String>, sum: Int): Int {
         val points = input.parseWith("(\\d+), (\\d+)") { (x, y) -> Point(x, y) }
-        return generatePoints(getBoundary(points))
+        return getBoundary(points).getEnclosing()
                 .associateWith { point -> points.sumBy(point::manhattanDistance) }
                 .filterValues { it < sum }
                 .size
@@ -44,14 +42,14 @@ object Day06 {
         }
         return Point(x1, y1) to Point(x2, y2)
     }
-
-    private fun generatePoints(boundaries: Pair<Point, Point>): Set<Point> {
-        val (min, max) = boundaries
-        return (min.x..max.x)
-                .flatMap { x -> (min.y..max.y).map { y -> Point(x, y) } }
-                .toSet()
-    }
 }
+
+private typealias Boundary = Pair<Point, Point>
+
+private fun Boundary.getEnclosing() =
+        (first.x..second.x)
+                .flatMap { x -> (first.y..second.y).map { y -> Point(x, y) } }
+                .toSet()
 
 private fun Point.on(boundary: Boundary) = boundary.let { (min, max) ->
     x == min.x || x == max.x || y == min.y || y == max.y
