@@ -11,9 +11,8 @@ object Day06 {
                 .associateWith { point ->
                     points.associateWith { it.manhattanDistance(point) }
                             .flip()
-                            .minBy { it.key }!!
-                            .value
-                            .let { if (it.size == 1) it[0] else null }
+                            .minBy { it.key }
+                            .let { if (it?.value?.size == 1) it.value[0] else null }
                 }
                 .filterValues { it != null }
                 .flip()
