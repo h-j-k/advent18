@@ -15,6 +15,10 @@ fun <K, V> MutableMap<K, Set<V>>.mergeSetValues(key: K, value: V) =
 fun <T, R> Iterable<T>.parallelMap(mapper: suspend (T) -> R) =
         runBlocking { map { async { mapper(it) } }.map { it.await() } }
 
+fun <K, V> Map<K, V>.flip() = this.entries
+        .groupBy { it.value }
+        .mapValues { (_, list) -> list.map { it.key } }
+
 data class Point(val x: Int, val y: Int) {
     constructor(x: String, y: String) : this(x.toInt(), y.toInt())
 }

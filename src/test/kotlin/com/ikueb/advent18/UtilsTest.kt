@@ -25,4 +25,10 @@ internal class UtilsTest {
         map.mergeSetValues("a", Point(3, 4))
         assertThat(map).isEqualTo(mapOf("a" to setOf(Point(1, 2), Point(3, 4))))
     }
+
+    @Test
+    fun canFlip() {
+        val map = mapOf("a" to 1, "b" to 1)
+        assertThat(map.flip()).isEqualTo(mapOf(1 to listOf("a", "b")))
+    }
 }
