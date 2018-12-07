@@ -47,8 +47,4 @@ object Day05 {
     }
 
     private fun Char.isOppositeAscii(other: Char) = Math.abs(toInt() - other.toInt()) == 32
-
-    private fun <T, R> Iterable<T>.parallelMap(mapper: suspend (T) -> R): List<R> = runBlocking {
-        map { async { mapper(it) } }.map { it.await() }
-    }
 }

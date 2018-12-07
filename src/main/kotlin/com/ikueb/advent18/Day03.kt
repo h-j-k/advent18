@@ -35,5 +35,3 @@ private data class Claim(val id: Int, val x: Int, val y: Int, val xSize: Int, va
             .flatMap { x -> getYRange().map { y -> Point(x, y) } }
             .toSet()
 }
-
-private data class Point(val x: Int, val y: Int)

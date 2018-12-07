@@ -7,13 +7,13 @@ internal class UtilsTest {
 
     @Test
     fun canParseFromString() {
-        val actual = "(\\d+),(\\d+)".parseWith("1,2") { (x, y) -> Point(x.toInt(), y.toInt()) }
+        val actual = "(\\d+),(\\d+)".parseWith("1,2") { (x, y) -> Point(x, y) }
         assertThat(actual).isEqualTo(Point(1, 2))
     }
 
     @Test
     fun canParseFromList() {
-        val actual = listOf("1,2").parseWith("(\\d+),(\\d+)") { (x, y) -> Point(x.toInt(), y.toInt()) }
+        val actual = listOf("1,2").parseWith("(\\d+),(\\d+)") { (x, y) -> Point(x, y) }
         assertThat(actual).contains(Point(1, 2))
     }
 
@@ -26,5 +26,3 @@ internal class UtilsTest {
         assertThat(map).isEqualTo(mapOf("a" to setOf(Point(1, 2), Point(3, 4))))
     }
 }
-
-private data class Point(val x: Int, val y: Int)
