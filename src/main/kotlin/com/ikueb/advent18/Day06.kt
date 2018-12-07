@@ -2,12 +2,14 @@ package com.ikueb.advent18
 
 import kotlin.properties.Delegates.vetoable
 
+typealias Boundary = Pair<Point, Point>
+
 object Day06 {
 
     fun getLargestDefiniteArea(input: List<String>): Int {
         val points = input.parseWith("(\\d+), (\\d+)") { (x, y) -> Point(x, y) }
-        val boundaries = getBoundaries(points)
-        return generatePoints(boundaries)
+        val boundary = getBoundary(points)
+        return generatePoints(boundary)
                 .associateWith { point ->
                     points.associateWith(point::manhattanDistance)
                             .flip()
@@ -16,22 +18,20 @@ object Day06 {
                 }
                 .filterValues { it != null }
                 .flip()
-                .filterValues { closest ->
-                    closest.none { boundaries.let { (min, max) -> min.on(it) || max.on(it) } }
-                }
+                .filterValues { closest -> closest.none { it.on(boundary) } }
                 .map { it.value.size }
                 .maxBy { it }!!
     }
 
     fun getLargestRegionWithManhattanDistanceSumLessThan(input: List<String>, sum: Int): Int {
         val points = input.parseWith("(\\d+), (\\d+)") { (x, y) -> Point(x, y) }
-        return generatePoints(getBoundaries(points))
+        return generatePoints(getBoundary(points))
                 .associateWith { point -> points.sumBy(point::manhattanDistance) }
                 .filterValues { it < sum }
                 .size
     }
 
-    private fun getBoundaries(points: Collection<Point>): Pair<Point, Point> {
+    private fun getBoundary(points: Collection<Point>): Boundary {
         var x1: Int by vetoable(Int.MAX_VALUE) { _, old, new -> new < old }
         var x2: Int by vetoable(Int.MIN_VALUE) { _, old, new -> new > old }
         var y1: Int by vetoable(Int.MAX_VALUE) { _, old, new -> new < old }
@@ -53,6 +53,8 @@ object Day06 {
     }
 }
 
-private fun Point.on(other: Point) = x == other.x || y == other.y
+private fun Point.on(boundary: Boundary) = boundary.let { (min, max) ->
+    x == min.x || x == max.x || y == min.y || y == max.y
+}
 
 private fun Point.manhattanDistance(other: Point) = Math.abs(x - other.x) + Math.abs(y - other.y)
