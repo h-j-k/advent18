@@ -1,8 +1,5 @@
 package com.ikueb.advent18
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
-
 object Day05 {
 
     fun getResultingLength(input: String) = process(input).trim().length
@@ -10,7 +7,8 @@ object Day05 {
     fun getShortestPossible(input: String) = CharRange('a', 'z')
             .map { input.replace(it.toString(), "", true) }
             .parallelMap { process(it) }
-            .minBy { it.length }!!.length
+            .minBy { it.length }?.length
+            ?: throw IllegalArgumentException("No results.")
 
     private fun process(input: String): String {
         if (input.length < 2) {

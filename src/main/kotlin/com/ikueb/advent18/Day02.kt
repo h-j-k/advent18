@@ -23,7 +23,7 @@ object Day02 {
                 sums.mergeSetValues(currentSum, current)
             }
         }
-        throw IllegalStateException("No candidates found")
+        throw IllegalArgumentException("No results.")
     }
 
     private fun getCandidateResult(a: String, b: String): String? {

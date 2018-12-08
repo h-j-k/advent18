@@ -10,7 +10,8 @@ object Day03 {
     fun getNonOverlappingId(input: List<String>): Int {
         val (claims, overlaps) = parseAndFindOverlappingPoints(input)
         val overlappingIds = overlaps.flatMapTo(mutableSetOf()) { it.value }
-        return claims.find { it -> !overlappingIds.contains(it) }!!.id
+        return claims.find { it -> !overlappingIds.contains(it) }?.id
+                ?: throw IllegalArgumentException("No results.")
     }
 
     private fun parseAndFindOverlappingPoints(input: List<String>) =

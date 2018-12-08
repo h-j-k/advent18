@@ -8,13 +8,15 @@ object Day04 {
 
     private val PARSER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
-    fun strategyOne(input: List<String>) = mapGuardsToNaps(input)
-            .maxBy { it.value.sumBy { nap -> nap.last - nap.first + 1 } }!!
+    fun strategyOne(input: List<String>) = (mapGuardsToNaps(input)
+            .maxBy { it.value.sumBy { nap -> nap.last - nap.first + 1 } }
+            ?: throw IllegalArgumentException("No results."))
             .let { it.key * mostCommon(it.value).key }
 
-    fun strategyTwo(input: List<String>) = mapGuardsToNaps(input)
+    fun strategyTwo(input: List<String>) = (mapGuardsToNaps(input)
             .mapValues { mostCommon(it.value) }
-            .maxBy { it.value.value }!!
+            .maxBy { it.value.value }
+            ?: throw IllegalArgumentException("No results."))
             .let { it.key * it.value.key }
 
     private fun mapGuardsToNaps(input: List<String>): Map<Int, Set<IntRange>> {
@@ -34,7 +36,8 @@ object Day04 {
     }
 
     private fun mostCommon(set: Set<IntRange>) =
-            set.flatten().groupingBy { it }.eachCount().maxBy { it.value }!!
+            set.flatten().groupingBy { it }.eachCount().maxBy { it.value }
+                    ?: throw IllegalArgumentException("No results.")
 }
 
 private data class Log(val timestamp: LocalDateTime, val entry: String) : Comparable<Log> {

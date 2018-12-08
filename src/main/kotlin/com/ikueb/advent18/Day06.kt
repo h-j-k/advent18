@@ -18,7 +18,8 @@ object Day06 {
                 .flip()
                 .filterValues { closest -> closest.none(boundary::contains) }
                 .map { it.value.size }
-                .maxBy { it }!!
+                .maxBy { it }
+                ?: throw IllegalArgumentException("No results.")
     }
 
     fun getLargestRegionWithManhattanDistanceSumLessThan(input: List<String>, sum: Int): Int {
