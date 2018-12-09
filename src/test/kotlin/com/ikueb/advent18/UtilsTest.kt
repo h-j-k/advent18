@@ -19,11 +19,20 @@ internal class UtilsTest {
 
     @Test
     fun canMergeSetValues() {
-        val map = mutableMapOf<String, Set<Point>>()
-        map.mergeSetValues("a", Point(1, 2))
-        map.mergeSetValues("a", Point(1, 2))
-        map.mergeSetValues("a", Point(3, 4))
-        assertThat(map).isEqualTo(mapOf("a" to setOf(Point(1, 2), Point(3, 4))))
+        val map = mutableMapOf<String, Set<Int>>()
+        map.mergeSetValues("a", 1)
+        map.mergeSetValues("a", 1)
+        map.mergeSetValues("a", 2)
+        assertThat(map).isEqualTo(mapOf("a" to setOf(1, 2)))
+    }
+
+    @Test
+    fun canMergeListValues() {
+        val map = mutableMapOf<String, MutableList<Int>>()
+        map.mergeMutableListValues("a", 1)
+        map.mergeMutableListValues("a", 1)
+        map.mergeMutableListValues("a", 2)
+        assertThat(map).isEqualTo(mapOf("a" to listOf(1, 1, 2)))
     }
 
     @Test

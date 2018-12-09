@@ -13,8 +13,8 @@ inline fun <T> List<CharSequence>.parseWith(pattern: String, mapper: (MatchResul
 fun <K, V> MutableMap<K, Set<V>>.mergeSetValues(key: K, value: V) =
         merge(key, setOf(value)) { a, b -> a.plus(b) }
 
-fun <K, V> MutableMap<K, List<V>>.mergeListValues(key: K, value: V) =
-        merge(key, listOf(value)) { a, b -> a.plus(b) }
+fun <K, V> MutableMap<K, MutableList<V>>.mergeMutableListValues(key: K, value: V) =
+        merge(key, mutableListOf(value)) { a, b -> a.addAll(b); a }
 
 fun <T, R> Iterable<T>.parallelMap(mapper: suspend (T) -> R) =
         runBlocking { map { async { mapper(it) } }.map { it.await() } }
