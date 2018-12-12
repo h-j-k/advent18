@@ -23,7 +23,49 @@ object Day08 {
             metadataCounts.removeLast()
             isHeader = nodeCounts.decrementAndGetLast() >= 1
         }
-        return metadata.flatten().sumBy { it }
+        return metadata.flatten().sum()
+    }
+
+    fun getValueOfRootNode(input: String): Int {
+        val metadataCounts: Tree = mutableListOf()
+        val nodeCounts: Tree = mutableListOf()
+        val childNodes = mutableListOf<MutableList<Int>>()
+        lateinit var currentChildNode: Tree
+        var isHeader = true
+        var isChildless = false
+        val scanner = Scanner(input)
+        while (scanner.hasNextInt()) {
+            if (isHeader) {
+                nodeCounts.add(scanner.nextInt())
+                metadataCounts.add(scanner.nextInt())
+                currentChildNode = mutableListOf()
+                isHeader = nodeCounts.last() != 0
+                if (isHeader) {
+                    childNodes.add(currentChildNode)
+                }
+                isChildless = !isHeader
+                continue
+            }
+            val metadata = (1..metadataCounts.last())
+                    .map { scanner.nextInt() }
+            metadataCounts.removeLast()
+            val childResult = metadata.sumBy {
+                if (isChildless) it
+                else currentChildNode.getOrZero(it - 1)
+            }
+            currentChildNode = if (metadataCounts.isEmpty()) {
+                mutableListOf()
+            } else {
+                if (!isChildless) {
+                    childNodes.removeLast()
+                }
+                childNodes.last()
+            }
+            currentChildNode.add(childResult)
+            isHeader = nodeCounts.decrementAndGetLast() >= 1
+            isChildless = false
+        }
+        return currentChildNode.sum()
     }
 }
 
@@ -41,4 +83,6 @@ private fun Tree.decrementAndGetLast(): Int {
     }
 }
 
-private fun Tree.removeLast() = removeAt(lastIndex)
+private fun Tree.getOrZero(n: Int) = if (n < size) this[n] else 0
+
+private fun <T> MutableList<T>.removeLast() = removeAt(lastIndex)
