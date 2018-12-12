@@ -21,16 +21,15 @@ object Day08 {
                     .map { scanner.nextInt() }
                     .let { metadata.add(it) }
             metadataCounts.removeLast()
-            isHeader = nodeCounts.decrement() >= 1
+            isHeader = nodeCounts.decrementAndGetLast() >= 1
         }
-        println(metadata)
         return metadata.flatten().sumBy { it }
     }
 }
 
 private typealias Tree = MutableList<Int>
 
-private fun Tree.decrement(): Int {
+private fun Tree.decrementAndGetLast(): Int {
     if (isEmpty()) return -1
     val result = last() - 1
     return if (result > 0) {
