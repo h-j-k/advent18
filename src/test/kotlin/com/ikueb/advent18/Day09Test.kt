@@ -17,7 +17,7 @@ internal class Day09Test {
         "21 players; last marble is worth 6111 points | 54718",
         "30 players; last marble is worth 5807 points | 37305"
     ])
-    fun partOneExample(input: String, expected: Int) {
+    fun partOneExample(input: String, expected: Long) {
         assertThat(getHighestScore(input)).isEqualTo(expected)
     }
 
@@ -25,5 +25,11 @@ internal class Day09Test {
     fun partOne() {
         assertThat(getHighestScore("477 players; last marble is worth 70851 points"))
                 .isEqualTo(374690)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getHighestScore("477 players; last marble is worth 7085100 points"))
+                .isEqualTo(3009951158)
     }
 }
