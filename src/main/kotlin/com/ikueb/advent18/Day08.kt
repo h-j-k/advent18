@@ -4,62 +4,42 @@ import java.util.*
 
 object Day08 {
 
-    fun getSumOfMetadata(input: String): Int {
-        val metadata = mutableListOf<List<Int>>()
-        val metadataCounts: Tree = mutableListOf()
-        val nodeCounts: Tree = mutableListOf()
-        var isHeader = true
-        val scanner = Scanner(input)
-        while (scanner.hasNextInt()) {
-            if (isHeader) {
-                nodeCounts.add(scanner.nextInt())
-                metadataCounts.add(scanner.nextInt())
-                isHeader = nodeCounts.last() != 0
-                continue
-            }
-            (1..metadataCounts.removeLast())
-                    .map { scanner.nextInt() }
-                    .let { metadata.add(it) }
-            isHeader = nodeCounts.decrementAndGetLast() >= 1
-        }
-        return metadata.flatten().sum()
-    }
+    fun getSumOfMetadata(input: String) = process(input).first
 
-    fun getValueOfRootNode(input: String): Int {
+    fun getValueOfRootNode(input: String) = process(input).second
+
+    private fun process(input: String): Pair<Int, Int> {
+        val metadata: Tree = mutableListOf()
         val metadataCounts: Tree = mutableListOf()
         val nodeCounts: Tree = mutableListOf()
         val childNodes = mutableListOf<MutableList<Int>>()
                 .apply { add(mutableListOf()) }
         lateinit var currentNode: Tree
         var isHeader = true
-        var isChildless = false
         val scanner = Scanner(input)
         while (scanner.hasNextInt()) {
             if (isHeader) {
                 nodeCounts.add(scanner.nextInt())
                 metadataCounts.add(scanner.nextInt())
                 currentNode = mutableListOf()
-                isHeader = nodeCounts.last() != 0
-                isChildless = !isHeader
-                if (isHeader) {
-                    childNodes.add(currentNode)
-                }
+                isHeader = (nodeCounts.last() != 0)
+                        .apply { if (this) childNodes.add(currentNode) }
                 continue
             }
-            val childResult = (1..metadataCounts.removeLast())
+            if (currentNode.isNotEmpty()) childNodes.removeLast()
+            val entries = (1..metadataCounts.removeLast())
                     .map { scanner.nextInt() }
+            metadata.add(entries.sum())
+            currentNode = entries
                     .sumBy {
-                        if (isChildless) it
+                        if (currentNode.isEmpty()) it
                         else currentNode.getOrZero(it - 1)
+                    }.let {
+                        with(childNodes.last()) { add(it); this }
                     }
-            if (!isChildless) {
-                childNodes.removeLast()
-            }
-            currentNode = childNodes.last().apply { add(childResult) }
             isHeader = nodeCounts.decrementAndGetLast() >= 1
-            isChildless = false
         }
-        return currentNode.sum()
+        return metadata.sum() to currentNode.sum()
     }
 }
 
@@ -73,7 +53,7 @@ private fun Tree.decrementAndGetLast(): Int {
         result
     } else {
         removeAt(lastIndex)
-        if (isEmpty()) -1 else (last() - 1).also { set(lastIndex, it) }
+        if (isEmpty()) -1 else (last() - 1).apply { set(lastIndex, this) }
     }
 }
 
