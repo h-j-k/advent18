@@ -17,10 +17,9 @@ object Day08 {
                 isHeader = nodeCounts.last() != 0
                 continue
             }
-            (1..metadataCounts.last())
+            (1..metadataCounts.removeLast())
                     .map { scanner.nextInt() }
                     .let { metadata.add(it) }
-            metadataCounts.removeLast()
             isHeader = nodeCounts.decrementAndGetLast() >= 1
         }
         return metadata.flatten().sum()
@@ -30,6 +29,7 @@ object Day08 {
         val metadataCounts: Tree = mutableListOf()
         val nodeCounts: Tree = mutableListOf()
         val childNodes = mutableListOf<MutableList<Int>>()
+                .apply { add(mutableListOf()) }
         lateinit var currentNode: Tree
         var isHeader = true
         var isChildless = false
@@ -46,22 +46,16 @@ object Day08 {
                 }
                 continue
             }
-            val childResult = (1..metadataCounts.last())
+            val childResult = (1..metadataCounts.removeLast())
                     .map { scanner.nextInt() }
                     .sumBy {
                         if (isChildless) it
                         else currentNode.getOrZero(it - 1)
                     }
-            metadataCounts.removeLast()
-            currentNode = if (metadataCounts.isEmpty()) {
-                mutableListOf()
-            } else {
-                if (!isChildless) {
-                    childNodes.removeLast()
-                }
-                childNodes.last()
+            if (!isChildless) {
+                childNodes.removeLast()
             }
-            currentNode.add(childResult)
+            currentNode = childNodes.last().apply { add(childResult) }
             isHeader = nodeCounts.decrementAndGetLast() >= 1
             isChildless = false
         }
