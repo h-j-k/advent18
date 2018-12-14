@@ -1,7 +1,5 @@
 package com.ikueb.advent18
 
-import kotlin.properties.Delegates.vetoable
-
 object Day06 {
 
     fun getLargestDefiniteArea(input: List<String>): Int {
@@ -29,23 +27,7 @@ object Day06 {
                 .filterValues { it < sum }
                 .size
     }
-
-    private fun getBoundary(points: Collection<Point>): Boundary {
-        var xMin: Int by vetoable(Int.MAX_VALUE) { _, old, new -> new < old }
-        var xMax: Int by vetoable(Int.MIN_VALUE) { _, old, new -> new > old }
-        var yMin: Int by vetoable(Int.MAX_VALUE) { _, old, new -> new < old }
-        var yMax: Int by vetoable(Int.MIN_VALUE) { _, old, new -> new > old }
-        points.forEach {
-            xMin = it.x
-            xMax = it.x
-            yMin = it.y
-            yMax = it.y
-        }
-        return Point(xMin, yMin) to Point(xMax, yMax)
-    }
 }
-
-private typealias Boundary = Pair<Point, Point>
 
 private fun Boundary.getEnclosingPoints() =
         (first.x..second.x)

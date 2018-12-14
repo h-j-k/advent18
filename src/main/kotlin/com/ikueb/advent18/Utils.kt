@@ -2,6 +2,7 @@ package com.ikueb.advent18
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlin.properties.Delegates
 
 inline fun <T> String.parseWith(input: CharSequence, mapper: (MatchResult.Destructured) -> T) =
         (toRegex().matchEntire(input) ?: throw IllegalArgumentException("Wrong format."))
@@ -24,5 +25,31 @@ fun <K, V> Map<K, V>.flip() = this.entries
         .mapValues { (_, list) -> list.map { it.key } }
 
 data class Point(val x: Int, val y: Int) {
-    constructor(x: String, y: String) : this(x.toInt(), y.toInt())
+    constructor(x: String, y: String) : this(x.trim().toInt(), y.trim().toInt())
 }
+
+typealias Boundary = Pair<Point, Point>
+
+fun getBoundary(points: Collection<Point>): Boundary {
+    var xMin: Int by Delegates.vetoable(Int.MAX_VALUE) { _, old, new -> new < old }
+    var xMax: Int by Delegates.vetoable(Int.MIN_VALUE) { _, old, new -> new > old }
+    var yMin: Int by Delegates.vetoable(Int.MAX_VALUE) { _, old, new -> new < old }
+    var yMax: Int by Delegates.vetoable(Int.MIN_VALUE) { _, old, new -> new > old }
+    points.forEach {
+        xMin = it.x
+        xMax = it.x
+        yMin = it.y
+        yMax = it.y
+    }
+    return Point(xMin, yMin) to Point(xMax, yMax)
+}
+
+fun Boundary.getWidth() = second.x - first.x + 1
+
+fun Boundary.getHeight() = second.y - first.y + 1
+
+fun Boundary.getArea() = getWidth().toLong() * getHeight().toLong()
+
+fun Boundary.getOriginX() = first.x
+
+fun Boundary.getOriginY() = first.y
