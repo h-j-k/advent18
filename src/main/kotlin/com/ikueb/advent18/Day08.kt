@@ -30,7 +30,7 @@ object Day08 {
         val metadataCounts: Tree = mutableListOf()
         val nodeCounts: Tree = mutableListOf()
         val childNodes = mutableListOf<MutableList<Int>>()
-        lateinit var currentChildNode: Tree
+        lateinit var currentNode: Tree
         var isHeader = true
         var isChildless = false
         val scanner = Scanner(input)
@@ -38,22 +38,22 @@ object Day08 {
             if (isHeader) {
                 nodeCounts.add(scanner.nextInt())
                 metadataCounts.add(scanner.nextInt())
-                currentChildNode = mutableListOf()
+                currentNode = mutableListOf()
                 isHeader = nodeCounts.last() != 0
-                if (isHeader) {
-                    childNodes.add(currentChildNode)
-                }
                 isChildless = !isHeader
+                if (isHeader) {
+                    childNodes.add(currentNode)
+                }
                 continue
             }
-            val metadata = (1..metadataCounts.last())
+            val childResult = (1..metadataCounts.last())
                     .map { scanner.nextInt() }
+                    .sumBy {
+                        if (isChildless) it
+                        else currentNode.getOrZero(it - 1)
+                    }
             metadataCounts.removeLast()
-            val childResult = metadata.sumBy {
-                if (isChildless) it
-                else currentChildNode.getOrZero(it - 1)
-            }
-            currentChildNode = if (metadataCounts.isEmpty()) {
+            currentNode = if (metadataCounts.isEmpty()) {
                 mutableListOf()
             } else {
                 if (!isChildless) {
@@ -61,11 +61,11 @@ object Day08 {
                 }
                 childNodes.last()
             }
-            currentChildNode.add(childResult)
+            currentNode.add(childResult)
             isHeader = nodeCounts.decrementAndGetLast() >= 1
             isChildless = false
         }
-        return currentChildNode.sum()
+        return currentNode.sum()
     }
 }
 

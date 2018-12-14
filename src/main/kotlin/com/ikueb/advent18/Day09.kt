@@ -6,7 +6,7 @@ import kotlin.math.absoluteValue
 object Day09 {
 
     fun getHighestScore(input: String) =
-            "(\\d+) players; last marble is worth (\\d+) points"
+            "([1-9]\\d*) players; last marble is worth ([1-9]\\d*) points"
                     .parseWith(input) { (players, lastPoint) ->
                         play(players.toInt(), lastPoint.toInt())
                     }
@@ -26,9 +26,9 @@ private typealias Ring = ArrayDeque<Int>
 private fun Ring.addMarble(i: Int) =
         if (i % 23 == 0) {
             shift(-7)
-            val result = removeFirst()
+            val result = i + removeFirst().toLong()
             shift()
-            i + result.toLong()
+            result
         } else {
             shift()
             addFirst(i)
