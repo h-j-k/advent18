@@ -50,6 +50,4 @@ fun Boundary.getHeight() = second.y - first.y + 1
 
 fun Boundary.getArea() = getWidth().toLong() * getHeight().toLong()
 
-fun Boundary.getOriginX() = first.x
-
-fun Boundary.getOriginY() = first.y
+fun Boundary.getOffset(target: Point) = target.x - first.x to target.y - first.y

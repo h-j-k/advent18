@@ -20,17 +20,16 @@ object Day10 {
                 answer = current
                 continue
             }
-            val output = with(answer!!) {
+            return with(answer!!) {
                 Array(getHeight()) {
                     StringBuilder().apply {
                         append(CharArray(getWidth()) { '.' })
                     }
                 }
-            }
-            points.map(MovingPoint::reverse).forEach {
-                output[it.y - answer.getOriginY()][it.x - answer.getOriginX()] = '#'
-            }
-            return output.map { it.toString() } to i - 1
+            }.apply {
+                points.map { answer.getOffset(it.reverse()) }
+                        .forEach { (x, y) -> this[y][x] = '#' }
+            }.map { it.toString() } to i - 1
         }
         throw IllegalStateException("No results.")
     }
