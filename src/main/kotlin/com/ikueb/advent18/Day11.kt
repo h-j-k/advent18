@@ -3,11 +3,10 @@ package com.ikueb.advent18
 object Day11 {
 
     private val range = (1..300)
-    private val boundary = Boundary(Point(1, 1), Point(300, 300))
 
     fun getTopSquareTopCorner(input: Int) =
             process(input) { point ->
-                if (boundary.isOnBoundary(point)) emptySequence() else sequenceOf(3)
+                if (point.x < 3 || point.y < 3) emptySequence() else sequenceOf(3)
             }.first
 
     fun getTopVariableSquareTopCornerSize(input: Int) =
@@ -55,7 +54,3 @@ private data class Cell(val point: Point, val value: Int) {
 }
 
 private fun Point.squareSizesTo() = (1..minOf(x, y)).asSequence()
-
-private fun Boundary.isOnBoundary(point: Point) = with(point) {
-    x == first.x || x == second.y || y == first.y || y == second.y
-}

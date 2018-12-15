@@ -4,11 +4,7 @@ import com.ikueb.advent18.Day11.getTopSquareTopCorner
 import com.ikueb.advent18.Day11.getTopVariableSquareTopCornerSize
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.converter.ArgumentConversionException
-import org.junit.jupiter.params.converter.ArgumentConverter
-import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.CsvSource
 
 internal class Day11Test {
@@ -41,16 +37,3 @@ internal class Day11Test {
         assertThat(getTopVariableSquareTopCornerSize(7672)).isEqualTo("234,197,14")
     }
 }
-
-private object PointConverter : ArgumentConverter {
-    override fun convert(source: Any?, context: ParameterContext?): Any {
-        return source?.toString()?.let {
-            "(\\d+),(\\d+)".parseWith(it) { (x, y) -> Point(x, y) }
-        } ?: throw ArgumentConversionException("Unable to convert to point.")
-    }
-}
-
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.RUNTIME)
-@ConvertWith(PointConverter::class)
-private annotation class ToPoint
