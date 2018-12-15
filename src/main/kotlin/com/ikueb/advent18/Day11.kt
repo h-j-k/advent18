@@ -16,21 +16,19 @@ object Day11 {
             }
 
     fun getTopVariableSquareTopCornerSize(input: Int) =
-            with(mutableMapOf<Point, Int>()) {
-                generateGrid(input).forEach { (key, cell) ->
-                    this[key] = cell.withCumulativeSum(this)
-                }
-                this
-            }.run {
-                keys.asSequence().flatMap {
-                    it.squareSizesTo().map { size ->
-                        Triple(it.nw(size - 1), size, squarePowerTo(this, it, size))
+            generateGrid(input).entries
+                    .fold(mutableMapOf<Point, Int>()) { grid, entry ->
+                        grid[entry.key] = entry.value.withCumulativeSum(grid); grid
+                    }.run {
+                        keys.asSequence().flatMap {
+                            it.squareSizesTo().map { size ->
+                                Triple(it.nw(size - 1), size, squarePowerTo(this, it, size))
+                            }
+                        }.maxBy { (_, _, power) -> power }!!
+                                .let { (corner, size, _) ->
+                                    String.format("%d,%d,%d", corner.x, corner.y, size)
+                                }
                     }
-                }.maxBy { (_, _, power) -> power }!!
-                        .let { (corner, size, _) ->
-                            String.format("%d,%d,%d", corner.x, corner.y, size)
-                        }
-            }
 
     private fun generateGrid(serial: Int) = range
             .flatMap { x -> range.map { y -> Point(x, y) } }
