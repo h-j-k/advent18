@@ -4,9 +4,9 @@ object Day10 {
 
     private const val POSITION = "position=<([^,]+),([^>]+)> velocity=<([^,]+),([^>]+)>"
 
-    fun partOne(input: List<String>) = process(input).first
+    fun getMessage(input: List<String>) = process(input).first
 
-    fun partTwo(input: List<String>) = process(input).second
+    fun getElapsedTimeToMessage(input: List<String>) = process(input).second
 
     private fun process(input: List<String>): Pair<List<String>, Int> {
         val points = input.parseWith(POSITION)

@@ -1,7 +1,7 @@
 package com.ikueb.advent18
 
-import com.ikueb.advent18.Day10.partOne
-import com.ikueb.advent18.Day10.partTwo
+import com.ikueb.advent18.Day10.getMessage
+import com.ikueb.advent18.Day10.getElapsedTimeToMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -9,7 +9,7 @@ internal class Day10Test {
 
     @Test
     fun partOneExample() {
-        assertThat(partOne(example)).contains(
+        assertThat(getMessage(example)).contains(
                 "#...#..###",
                 "#...#...#.",
                 "#...#...#.",
@@ -23,7 +23,7 @@ internal class Day10Test {
 
     @Test
     fun partOne() {
-        assertThat(partOne(getInput("Day10"))).contains(
+        assertThat(getMessage(getInput("Day10"))).contains(
                 "#####...#....#..#####......###...####...#.......#####...######",
                 "#....#..#....#..#....#......#...#....#..#.......#....#..#.....",
                 "#....#..#....#..#....#......#...#.......#.......#....#..#.....",
@@ -39,12 +39,12 @@ internal class Day10Test {
 
     @Test
     fun partTwoExample() {
-        assertThat(partTwo(example)).isEqualTo(3)
+        assertThat(getElapsedTimeToMessage(example)).isEqualTo(3)
     }
 
     @Test
     fun partTwo() {
-        assertThat(partTwo(getInput("Day10"))).isEqualTo(10831)
+        assertThat(getElapsedTimeToMessage(getInput("Day10"))).isEqualTo(10831)
     }
 
     private val example = listOf(
