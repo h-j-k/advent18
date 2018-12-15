@@ -10,12 +10,10 @@ object Day10 {
 
     private fun process(input: List<String>): Pair<List<String>, Int> {
         val points = input.parseWith(POSITION)
-        { (x, y, xVelocity, yVelocity) ->
-            MovingPoint(Point(x, y), xVelocity.trim().toInt() to yVelocity.trim().toInt())
-        }
+        { (x, y, xVelocity, yVelocity) -> MovingPoint(x, y, xVelocity, yVelocity) }
         var answer: Boundary? = null
         for (i in generateSequence(1) { it + 1 }) {
-            val current = getMap(points)
+            val current = getBoundary(points.map(MovingPoint::forward))
             if (current.getArea() < (answer?.getArea() ?: Long.MAX_VALUE)) {
                 answer = current
                 continue
@@ -33,19 +31,20 @@ object Day10 {
         }
         throw IllegalStateException("No results.")
     }
-
-    private fun getMap(points: Collection<MovingPoint>) =
-            getBoundary(points.map(MovingPoint::forward))
 }
 
-data class MovingPoint(var point: Point, val velocity: Pair<Int, Int>) {
+data class MovingPoint(var point: Point, val xVelocity: Int, val yVelocity: Int) {
+
+    constructor(x: String, y: String, xVelocity: String, yVelocity: String) :
+            this(Point(x, y), xVelocity.trim().toInt(), yVelocity.trim().toInt())
+
     fun forward(): Point {
-        point = Point(point.x + velocity.first, point.y + velocity.second)
+        point = Point(point.x + xVelocity, point.y + yVelocity)
         return point
     }
 
     fun reverse(): Point {
-        point = Point(point.x - velocity.first, point.y - velocity.second)
+        point = Point(point.x - xVelocity, point.y - yVelocity)
         return point
     }
 }
