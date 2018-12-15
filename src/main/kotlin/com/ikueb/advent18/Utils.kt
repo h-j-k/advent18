@@ -26,6 +26,10 @@ fun <K, V> Map<K, V>.flip() = this.entries
 
 data class Point(val x: Int, val y: Int) {
     constructor(x: String, y: String) : this(x.trim().toInt(), y.trim().toInt())
+
+    fun nw(offset: Int = 1) = Point(x - offset, y - offset)
+    fun n(offset: Int = 1) = Point(x, y - offset)
+    fun w(offset: Int = 1) = Point(x - offset, y)
 }
 
 typealias Boundary = Pair<Point, Point>

@@ -1,6 +1,7 @@
 package com.ikueb.advent18
 
 import com.ikueb.advent18.Day11.getTopSquareTopCorner
+import com.ikueb.advent18.Day11.getTopVariableSquareTopCornerSize
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ParameterContext
@@ -24,6 +25,20 @@ internal class Day11Test {
     @Test
     fun partOne() {
         assertThat(getTopSquareTopCorner(7672)).isEqualTo(Point(22, 18))
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = [
+        "18 | 90,269,16",
+        "42 | 232,251,12"
+    ])
+    fun partTwoExample(input: Int, expected: String) {
+        assertThat(getTopVariableSquareTopCornerSize(input)).isEqualTo(expected)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getTopVariableSquareTopCornerSize(7672)).isEqualTo("234,197,14")
     }
 }
 
