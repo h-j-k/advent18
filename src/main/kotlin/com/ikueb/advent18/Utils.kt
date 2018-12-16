@@ -31,6 +31,8 @@ data class Point(val x: Int, val y: Int) {
     fun nw(offset: Int = 1) = Point(x - offset, y - offset)
     fun n(offset: Int = 1) = Point(x, y - offset)
     fun w(offset: Int = 1) = Point(x - offset, y)
+    fun s(offset: Int = 1) = Point(x, y + offset)
+    fun e(offset: Int = 1) = Point(x + offset, y)
 }
 
 typealias Boundary = Pair<Point, Point>
