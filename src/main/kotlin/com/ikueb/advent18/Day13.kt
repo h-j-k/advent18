@@ -2,23 +2,32 @@ package com.ikueb.advent18
 
 object Day13 {
 
-    fun getFirstCollision(input: List<String>): Point {
+    fun getFirstCollision(input: List<String>) =
+            process(input) { it.getCollisions().isEmpty() }.getCollisions().keys
+                    .sortedWith(compareBy({ it.y }, { it.x }))
+                    .first()
+
+    fun getLastCartStanding(input: List<String>) =
+            process(input) { it.count(Cart::active) > 1 }
+                    .find { it.active }!!.point
+
+    private fun process(input: List<String>,
+                        loopPredicate: (Carts) -> Boolean): Carts {
         val state = input.mapIndexed { i, line -> Line(i, line) }
         val carts = state.flatMap { it.carts }.toSet()
-        while (carts.getCollisions().isEmpty()) {
+        while (loopPredicate(carts)) {
             carts.sortedWith(compareBy({ it.point.y }, { it.point.x }))
                     .forEach {
                         it.nextPoint(state)
-                        if (carts.collidedAt(it).isNotEmpty()) {
-                            it.active = false
-                            carts.collidedAt(it)
-                                    .forEach { cart -> cart.active = false }
+                        with(carts.collidedAt(it)) {
+                            if (isNotEmpty()) {
+                                it.active = false
+                                forEach { cart -> cart.active = false }
+                            }
                         }
                     }
         }
-        return carts.getCollisions().keys
-                .sortedWith(compareBy({ it.y }, { it.x }))
-                .first()
+        return carts
     }
 }
 
