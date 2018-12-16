@@ -28,13 +28,3 @@ object Day06 {
                 .size
     }
 }
-
-private fun Boundary.getEnclosingPoints() =
-        (first.x..second.x)
-                .flatMap { x -> (first.y..second.y).map { y -> Point(x, y) } }
-                .toSet()
-
-private fun Boundary.contains(point: Point) =
-        point.x == first.x || point.x == second.x || point.y == first.y || point.y == second.y
-
-private fun Point.manhattanDistance(other: Point) = Math.abs(x - other.x) + Math.abs(y - other.y)

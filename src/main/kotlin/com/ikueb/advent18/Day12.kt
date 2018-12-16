@@ -47,8 +47,3 @@ data class PlantPredicate(val plants: List<Boolean>, val outcome: Boolean) {
                         (stateCopy[it] == true) == plants[it - n + 2]
                     }) outcome else null
 }
-
-private fun <T> List<T?>.firstOrNull(): T? {
-    forEach { if (it != null) return it }
-    return null
-}

@@ -27,6 +27,7 @@ fun <K, V> Map<K, V>.flip() = this.entries
 data class Point(val x: Int, val y: Int) {
     constructor(x: String, y: String) : this(x.trim().toInt(), y.trim().toInt())
 
+    fun manhattanDistance(other: Point) = Math.abs(x - other.x) + Math.abs(y - other.y)
     fun nw(offset: Int = 1) = Point(x - offset, y - offset)
     fun n(offset: Int = 1) = Point(x, y - offset)
     fun w(offset: Int = 1) = Point(x - offset, y)
@@ -55,3 +56,16 @@ fun Boundary.getHeight() = second.y - first.y + 1
 fun Boundary.getArea() = getWidth().toLong() * getHeight().toLong()
 
 fun Boundary.getOffset(target: Point) = target.x - first.x to target.y - first.y
+
+fun Boundary.getEnclosingPoints() =
+        (first.x..second.x)
+                .flatMap { x -> (first.y..second.y).map { y -> Point(x, y) } }
+                .toSet()
+
+fun Boundary.contains(point: Point) =
+        point.x == first.x || point.x == second.x || point.y == first.y || point.y == second.y
+
+fun <T> List<T?>.firstOrNull(): T? {
+    forEach { if (it != null) return it }
+    return null
+}

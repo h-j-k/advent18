@@ -35,7 +35,6 @@ private fun Ring.addMarble(i: Int) =
             0
         }
 
-// https://todd.ginsberg.com/post/advent-of-code/2018/day9/
 private fun Ring.shift(n: Int = 1) =
         if (n < 0) {
             repeat(n.absoluteValue) { addLast(removeFirst()) }
