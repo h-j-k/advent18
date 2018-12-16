@@ -5,13 +5,28 @@ object Day13 {
     fun getFirstCollision(input: List<String>): Point {
         val state = input.mapIndexed { i, line -> Line(i, line) }
         val carts = state.flatMap { it.carts }.toSet()
-        while (carts.groupBy { it.point }.values.none { it.size > 1 }) {
+        while (carts.getCollisions().isEmpty()) {
             carts.sortedWith(compareBy({ it.point.y }, { it.point.x }))
-                    .forEach { it.nextPoint(state) }
+                    .forEach {
+                        it.nextPoint(state)
+                        if (carts.collidedAt(it).isNotEmpty()) {
+                            it.active = false
+                            carts.collidedAt(it)
+                                    .forEach { cart -> cart.active = false }
+                        }
+                    }
         }
-        return carts.groupBy { it.point }.filterValues { it.size > 1 }.keys.first()
+        return carts.getCollisions().keys
+                .sortedWith(compareBy({ it.y }, { it.x }))
+                .first()
     }
 }
+
+private typealias Carts = Set<Cart>
+
+private fun Carts.getCollisions() = filter { !it.active }.groupBy { it.point }
+
+private fun Carts.collidedAt(cart: Cart) = filter { it != cart && cart.at(it) }
 
 private data class Line(val carts: Set<Cart>, val track: String) {
 
@@ -21,51 +36,52 @@ private data class Line(val carts: Set<Cart>, val track: String) {
     fun get(column: Int) = track[column]
 
     companion object {
-        fun getCarts(row: Int, input: String): Set<Cart> {
-            val result = mutableSetOf<Cart>()
+        fun getCarts(row: Int, input: String) = mutableSetOf<Cart>().apply {
             input.forEachIndexed { i, track ->
                 when (track) {
-                    '^' -> result.add(Cart(Point(i, row), Direction.NORTH))
-                    '>' -> result.add(Cart(Point(i, row), Direction.EAST))
-                    'v' -> result.add(Cart(Point(i, row), Direction.SOUTH))
-                    '<' -> result.add(Cart(Point(i, row), Direction.WEST))
+                    '^' -> add(Cart(Point(i, row), Direction.NORTH))
+                    '>' -> add(Cart(Point(i, row), Direction.EAST))
+                    'v' -> add(Cart(Point(i, row), Direction.SOUTH))
+                    '<' -> add(Cart(Point(i, row), Direction.WEST))
                 }
             }
-            return result.toSet()
-        }
+        }.toSet()
 
-        fun getTrack(input: String): String {
-            val result = StringBuilder(input)
+        fun getTrack(input: String) = StringBuilder(input).apply {
             input.forEachIndexed { i, track ->
                 when (track) {
-                    '<', '>' -> result.setCharAt(i, '-')
-                    '^', 'v' -> result.setCharAt(i, '|')
+                    '<', '>' -> setCharAt(i, '-')
+                    '^', 'v' -> setCharAt(i, '|')
                 }
             }
-            return result.toString()
-        }
+        }.toString()
     }
 }
 
 private data class Cart(var point: Point,
                         var direction: Direction,
-                        var turn: Turn? = null) {
+                        var turn: Turn? = null,
+                        var active: Boolean = true) {
 
     fun nextPoint(state: List<Line>) {
+        if (!active) return
         point = when (direction) {
             Direction.NORTH -> point.n()
             Direction.EAST -> point.e()
             Direction.SOUTH -> point.s()
             Direction.WEST -> point.w()
         }
-        when (val track = state[point.y].get(point.x)) {
+        when (val track = state[point.y].track[point.x]) {
             '\\', '/' -> direction = direction.corner(track)
-            '+' -> Turn.next(turn, direction).let { (nextTurn, nextDirection) ->
-                turn = nextTurn
-                direction = nextDirection
-            }
+            '+' -> Turn.next(turn, direction)
+                    .let { (nextTurn, nextDirection) ->
+                        turn = nextTurn
+                        direction = nextDirection
+                    }
         }
     }
+
+    fun at(other: Cart) = active && other.active && point == other.point
 }
 
 private enum class Turn {
