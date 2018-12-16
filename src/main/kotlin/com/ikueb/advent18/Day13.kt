@@ -3,7 +3,8 @@ package com.ikueb.advent18
 object Day13 {
 
     fun getFirstCollision(input: List<String>) =
-            process(input) { it.getCollisions().isEmpty() }.getCollisions().keys
+            process(input) { it.getCollisions().isEmpty() }
+                    .getCollisions().keys
                     .sortedWith(compareBy({ it.y }, { it.x }))
                     .first()
 
@@ -16,22 +17,23 @@ object Day13 {
         val state = input.mapIndexed { i, line -> Line(i, line) }
         val carts = state.flatMap { it.carts }.toSet()
         while (loopPredicate(carts)) {
-            carts.sortedWith(compareBy({ it.point.y }, { it.point.x }))
-                    .forEach {
-                        it.nextPoint(state)
-                        with(carts.collidedAt(it)) {
-                            if (isNotEmpty()) {
-                                it.active = false
-                                forEach { cart -> cart.active = false }
-                            }
-                        }
+            carts.ordered().forEach {
+                it.nextPoint(state)
+                with(carts.collidedAt(it)) {
+                    if (isNotEmpty()) {
+                        it.active = false
+                        forEach { cart -> cart.active = false }
                     }
+                }
+            }
         }
         return carts
     }
 }
 
 private typealias Carts = Set<Cart>
+
+private fun Carts.ordered() = sortedWith(compareBy({ it.point.y }, { it.point.x }))
 
 private fun Carts.getCollisions() = filter { !it.active }.groupBy { it.point }
 
