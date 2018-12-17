@@ -15,4 +15,4 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 after_success:
-- ./gradlew jacocoTestReport sonarqube && bash <(curl -s https://codecov.io/bash) && ls -l build/*
+- ./gradlew jacocoTestReport sonarqube && bash <(curl -s https://codecov.io/bash)
