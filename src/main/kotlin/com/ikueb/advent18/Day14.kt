@@ -6,13 +6,10 @@ object Day14 {
             process { it.length < input + 10 }
                     .substring(input, input + 10)
 
-    fun getFirstRecipes(input: Int): Int {
-        val target = input.toString()
-        return process {
-            !(it.length > target.length
-                    && it.substring(it.length - target.length, it.length) == target)
-        }.indexOf(input.toString())
-    }
+    fun getFirstRecipes(input: Int): Int =
+            input.toString().run {
+                process { !it.endsWith(this) }.indexOf(this)
+            }
 
     private fun process(predicate: (Recipes) -> Boolean): Recipes {
         var (elfOne, elfTwo) = Pair(0, 1)
@@ -36,6 +33,9 @@ private fun Recipes.generateAndAppend(elfOne: Int, elfTwo: Int) =
 
 private fun Recipes.getNext(index: Int) =
         (index + 1 + this[index].asNumber()) % length
+
+private fun Recipes.endsWith(target: String) = length >= target.length
+        && substring(length - target.length, length) == target
 
 private fun Char.asNumber() = when (this) {
     in '0'..'9' -> toInt() - '0'.toInt()
