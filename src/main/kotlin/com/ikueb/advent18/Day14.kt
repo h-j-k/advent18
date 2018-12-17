@@ -14,7 +14,6 @@ object Day14 {
     private fun process(predicate: (Recipes) -> Boolean): Recipes {
         var (elfOne, elfTwo) = Pair(0, 1)
         val state: Recipes = StringBuilder("37")
-        state.ensureCapacity(30000000)
         while (predicate(state)) {
             with(state) {
                 generateAndAppend(elfOne, elfTwo)
