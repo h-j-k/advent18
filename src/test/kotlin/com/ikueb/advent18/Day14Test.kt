@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.Day14.getFirstRecipes
+import com.ikueb.advent18.Day14.getTenRecipeScoresAfter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -15,11 +17,16 @@ internal class Day14Test {
         "2018 | 5941429882"
     ])
     fun partOneExample(input: Int, expected: String) {
-        assertThat(Day14.getTenRecipeScoresAfter(input)).isEqualTo(expected)
+        assertThat(getTenRecipeScoresAfter(input)).isEqualTo(expected)
     }
 
     @Test
     fun partOne() {
-        assertThat(Day14.getTenRecipeScoresAfter(509671)).isEqualTo("2810862211")
+        assertThat(getTenRecipeScoresAfter(509671)).isEqualTo("2810862211")
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getFirstRecipes(509671)).isEqualTo(20227889)
     }
 }
