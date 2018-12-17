@@ -1,5 +1,6 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.Point
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

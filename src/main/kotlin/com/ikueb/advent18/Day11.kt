@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.Point
+
 object Day11 {
 
     private val range = (1..300)

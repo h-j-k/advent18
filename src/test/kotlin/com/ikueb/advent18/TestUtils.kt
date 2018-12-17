@@ -1,5 +1,6 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.Point
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.converter.ArgumentConversionException
 import org.junit.jupiter.params.converter.ArgumentConverter

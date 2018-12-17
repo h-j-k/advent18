@@ -1,5 +1,10 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.Point
+import com.ikueb.advent18.model.contains
+import com.ikueb.advent18.model.getBoundary
+import com.ikueb.advent18.model.getEnclosingPoints
+
 object Day06 {
 
     fun getLargestDefiniteArea(input: List<String>): Int {

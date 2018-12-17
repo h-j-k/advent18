@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.Point
+
 object Day03 {
 
     private const val PATTERN = "#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)"

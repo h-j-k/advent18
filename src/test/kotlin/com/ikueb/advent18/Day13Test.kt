@@ -2,6 +2,7 @@ package com.ikueb.advent18
 
 import com.ikueb.advent18.Day13.getFirstCollision
 import com.ikueb.advent18.Day13.getLastCartStanding
+import com.ikueb.advent18.model.Point
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

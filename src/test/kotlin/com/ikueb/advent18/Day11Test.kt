@@ -2,6 +2,7 @@ package com.ikueb.advent18
 
 import com.ikueb.advent18.Day11.getTopSquareTopCorner
 import com.ikueb.advent18.Day11.getTopVariableSquareTopCornerSize
+import com.ikueb.advent18.model.Point
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,11 +1,13 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.*
+
 object Day13 {
 
     fun getFirstCollision(input: List<String>) =
             process(input) { it.getCollisions().isEmpty() }
                     .getCollisions().keys
-                    .sortedWith(compareBy({ it.y }, { it.x }))
+                    .sorted()
                     .first()
 
     fun getLastCartStanding(input: List<String>) =
@@ -14,10 +16,10 @@ object Day13 {
 
     private fun process(input: List<String>,
                         loopPredicate: (Carts) -> Boolean): Carts {
-        val state = input.mapIndexed { i, line -> Line(i, line) }
-        val carts = state.flatMap { it.carts }.toSet()
+        val state = input.asInputMap(getCarts(), getTrack())
+        val carts = state.getTokens()
         while (loopPredicate(carts)) {
-            carts.ordered().forEach {
+            carts.sortedWith(compareBy { it.point }).forEach {
                 it.nextPoint(state)
                 with(carts.collidedAt(it)) {
                     if (isNotEmpty()) {
@@ -33,40 +35,32 @@ object Day13 {
 
 private typealias Carts = Set<Cart>
 
-private fun Carts.ordered() = sortedWith(compareBy({ it.point.y }, { it.point.x }))
-
 private fun Carts.getCollisions() = filter { !it.active }.groupBy { it.point }
 
 private fun Carts.collidedAt(cart: Cart) = filter { it != cart && cart.at(it) }
 
-private data class Line(val carts: Set<Cart>, val track: String) {
-
-    constructor(row: Int, input: String) :
-            this(getCarts(row, input), getTrack(input))
-
-    fun get(column: Int) = track[column]
-
-    companion object {
-        fun getCarts(row: Int, input: String) = mutableSetOf<Cart>().apply {
-            input.forEachIndexed { i, track ->
-                when (track) {
-                    '^' -> add(Cart(Point(i, row), Direction.NORTH))
-                    '>' -> add(Cart(Point(i, row), Direction.EAST))
-                    'v' -> add(Cart(Point(i, row), Direction.SOUTH))
-                    '<' -> add(Cart(Point(i, row), Direction.WEST))
-                }
+private fun getCarts(): (Int, String) -> Set<Cart> = { row, input ->
+    mutableSetOf<Cart>().apply {
+        input.forEachIndexed { i, track ->
+            when (track) {
+                '^' -> add(Cart(Point(i, row), Direction.NORTH))
+                '>' -> add(Cart(Point(i, row), Direction.EAST))
+                'v' -> add(Cart(Point(i, row), Direction.SOUTH))
+                '<' -> add(Cart(Point(i, row), Direction.WEST))
             }
-        }.toSet()
+        }
+    }.toSet()
+}
 
-        fun getTrack(input: String) = StringBuilder(input).apply {
-            input.forEachIndexed { i, track ->
-                when (track) {
-                    '<', '>' -> setCharAt(i, '-')
-                    '^', 'v' -> setCharAt(i, '|')
-                }
+fun getTrack(): (String) -> String = { input ->
+    StringBuilder(input).apply {
+        input.forEachIndexed { i, track ->
+            when (track) {
+                '<', '>' -> setCharAt(i, '-')
+                '^', 'v' -> setCharAt(i, '|')
             }
-        }.toString()
-    }
+        }
+    }.toString()
 }
 
 private data class Cart(var point: Point,
@@ -74,7 +68,7 @@ private data class Cart(var point: Point,
                         var turn: Turn? = null,
                         var active: Boolean = true) {
 
-    fun nextPoint(state: List<Line>) {
+    fun nextPoint(state: InputMap<Cart>) {
         if (!active) return
         point = when (direction) {
             Direction.NORTH -> point.n()
@@ -82,7 +76,7 @@ private data class Cart(var point: Point,
             Direction.SOUTH -> point.s()
             Direction.WEST -> point.w()
         }
-        when (val track = state[point.y].track[point.x]) {
+        when (val track = state.at(point)) {
             '\\', '/' -> direction = direction.corner(track)
             '+' -> Turn.next(turn, direction)
                     .let { (nextTurn, nextDirection) ->

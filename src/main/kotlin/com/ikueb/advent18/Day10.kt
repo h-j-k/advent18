@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.*
+
 object Day10 {
 
     private const val POSITION = "position=<([^,]+),([^>]+)> velocity=<([^,]+),([^>]+)>"
