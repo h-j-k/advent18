@@ -19,7 +19,7 @@ object Day13 {
         val state = input.asInputMap(getCarts(), getTrack())
         val carts = state.getTokens()
         while (loopPredicate(carts)) {
-            carts.sortedWith(compareBy { it.point }).forEach {
+            carts.activeAndSorted().forEach {
                 it.nextPoint(state)
                 with(carts.collidedAt(it)) {
                     if (isNotEmpty()) {
@@ -33,7 +33,7 @@ object Day13 {
     }
 }
 
-private typealias Carts = Set<Cart>
+private typealias Carts = InputTokens<Cart>
 
 private fun Carts.getCollisions() = filter { !it.active }.groupBy { it.point }
 
@@ -52,7 +52,7 @@ private fun getCarts(): (Int, String) -> Set<Cart> = { row, input ->
     }.toSet()
 }
 
-fun getTrack(): (String) -> String = { input ->
+private fun getTrack(): (String) -> String = { input ->
     StringBuilder(input).apply {
         input.forEachIndexed { i, track ->
             when (track) {
@@ -63,10 +63,12 @@ fun getTrack(): (String) -> String = { input ->
     }.toString()
 }
 
-private data class Cart(var point: Point,
+private data class Cart(override var point: Point,
                         var direction: Direction,
                         var turn: Turn? = null,
-                        var active: Boolean = true) {
+                        var active: Boolean = true) : InputToken(point) {
+
+    override fun isActive() = active
 
     fun nextPoint(state: InputMap<Cart>) {
         if (!active) return
