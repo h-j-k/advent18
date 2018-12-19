@@ -21,7 +21,7 @@ object Day12 {
             val start = stateCopy.keys.minBy { it }!! - 3
             val end = stateCopy.keys.maxBy { it }!! + 3
             val current = (start..end).associateWith { n ->
-                rules.map { it.isPlantNext(n, stateCopy) }.firstOrNull()
+                rules.map { it.isPlantNext(n, stateCopy) }.firstNonNull()
             }.mapValues { it.value ?: false }
                     .apply { state.putAll(this) }
                     .filterValues { it }.keys

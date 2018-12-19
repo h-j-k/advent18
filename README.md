@@ -21,3 +21,4 @@ https://todd.ginsberg.com/post/advent-of-code/2018/
 * Day 10 (finding smallest area tip)
 * Day 11 (summed-area table)
 * Day 12 (part 2 tip)
+* Day 15 (path generation)

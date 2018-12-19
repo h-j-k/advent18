@@ -23,7 +23,7 @@ fun <K, V> Map<K, V>.flip() = this.entries
         .groupBy { it.value }
         .mapValues { (_, list) -> list.map { it.key } }
 
-fun <T> List<T?>.firstOrNull(): T? {
+fun <T> List<T?>.firstNonNull(): T? {
     forEach { if (it != null) return it }
     return null
 }
