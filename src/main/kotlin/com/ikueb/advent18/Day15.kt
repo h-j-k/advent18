@@ -5,11 +5,29 @@ import java.util.*
 
 object Day15 {
 
-    fun getBattleOutcome(input: List<String>): Int {
+    fun getBattleOutcome(input: List<String>) = battle(input)
+
+    fun getModifiedBattleOutcome(input: List<String>) = generateSequence(4) { it + 1 }
+            .map { elfPowerUp ->
+                battle(input, elfPowerUp) { players ->
+                    players.any { !it.isActive() && it.role == Role.ELF }
+                }
+            }.first { it > 0 }
+
+
+    private fun battle(input: List<String>,
+                       elfPowerUp: Int? = null,
+                       isEarlyTermination: (Players) -> Boolean = { false }): Int {
         val state: Cave = input.asInputMap(getPlayers(), getCaveMap())
         val players = state.getTokens()
+        elfPowerUp?.let { powerUp ->
+            players.filter { it.role == Role.ELF }.forEach { it.attack = powerUp }
+        }
         var completedRounds = 0
         while (players.gameContinues()) {
+            if (isEarlyTermination(players)) {
+                return 0
+            }
             var isCompleteRound = true
             for (player in players.activeAndSorted()) {
                 if (!players.gameContinues()) {
