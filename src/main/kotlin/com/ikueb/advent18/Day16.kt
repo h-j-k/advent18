@@ -2,13 +2,13 @@ package com.ikueb.advent18
 
 object Day16 {
 
-    fun likelyOpscodes(input: List<String>): Int {
+    fun likelyOpcodes(input: List<String>): Int {
         var result = 0
-        process(input) { if (countCandidates(it)) result++ }
+        process(input) { if (it.second.size >= 3) result++ }
         return result
     }
 
-    fun process(input: List<String>, postProcessor: (Pair<Int, List<Opcode>>) -> Unit) {
+    private fun process(input: List<String>, postProcessor: (Pair<Int, List<Opcode>>) -> Unit) {
         var isPreviousEmpty = false
         val current = mutableListOf<String>()
         for (line in input) {
@@ -24,9 +24,7 @@ object Day16 {
         postProcessor.invoke(processSample(current.toList()))
     }
 
-    private fun countCandidates(result: Pair<Int, List<Opcode>>) = result.second.size >= 3
-
-    private fun processSample(sample: List<String>): Pair<Int, List<Opcode>> {
+    private fun processSample(sample: List<String>): SampleResult {
         if (sample.size != 3) return -1 to emptyList()
         val before = "Before: \\[(\\d), (\\d), (\\d), (\\d)\\]".parseFor(
                 sample[0]) { (a, b, c, d) ->
@@ -43,6 +41,8 @@ object Day16 {
         return n to opcodes.filter { it.invoke(before, a, b) == after[c] }
     }
 }
+
+private typealias SampleResult = Pair<Int, List<Opcode>>
 
 private typealias RegisterState = List<Int>
 

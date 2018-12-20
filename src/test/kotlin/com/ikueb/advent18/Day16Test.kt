@@ -1,6 +1,6 @@
 package com.ikueb.advent18
 
-import com.ikueb.advent18.Day16.likelyOpscodes
+import com.ikueb.advent18.Day16.likelyOpcodes
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -8,12 +8,12 @@ internal class Day16Test {
 
     @Test
     fun partOneExample() {
-        assertThat(likelyOpscodes(partOneExample)).isEqualTo(1)
+        assertThat(likelyOpcodes(partOneExample)).isEqualTo(1)
     }
 
     @Test
     fun partOne() {
-        assertThat(likelyOpscodes(getInput("Day16"))).isEqualTo(560)
+        assertThat(likelyOpcodes(getInput("Day16"))).isEqualTo(560)
     }
 
     private val partOneExample = listOf(
