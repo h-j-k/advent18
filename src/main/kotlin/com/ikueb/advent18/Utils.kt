@@ -3,12 +3,12 @@ package com.ikueb.advent18
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
-inline fun <T> String.parseWith(input: CharSequence, mapper: (MatchResult.Destructured) -> T) =
+inline fun <T> String.parseFor(input: CharSequence, mapper: (MatchResult.Destructured) -> T) =
         (toRegex().matchEntire(input) ?: throw IllegalArgumentException("Wrong format."))
                 .destructured.let(mapper)
 
 inline fun <T> List<CharSequence>.parseWith(pattern: String, mapper: (MatchResult.Destructured) -> T) =
-        map { pattern.parseWith(it, mapper) }
+        map { pattern.parseFor(it, mapper) }
 
 fun <K, V> MutableMap<K, Set<V>>.mergeSetValues(key: K, value: V) =
         merge(key, setOf(value)) { a, b -> a.plus(b) }

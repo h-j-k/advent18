@@ -8,7 +8,7 @@ internal class UtilsTest {
 
     @Test
     fun canParseFromString() {
-        val actual = "(\\d+),(\\d+)".parseWith("1,2") { (x, y) -> Point(x, y) }
+        val actual = "(\\d+),(\\d+)".parseFor("1,2") { (x, y) -> Point(x, y) }
         assertThat(actual).isEqualTo(Point(1, 2))
     }
 

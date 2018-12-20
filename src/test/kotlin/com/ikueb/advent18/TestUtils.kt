@@ -29,7 +29,7 @@ fun getSingleInput(file: String): String {
 private object PointConverter : ArgumentConverter {
     override fun convert(source: Any?, context: ParameterContext?): Any {
         return source?.toString()?.let {
-            "(\\d+),(\\d+)".parseWith(it) { (x, y) -> Point(x, y) }
+            "(\\d+),(\\d+)".parseFor(it) { (x, y) -> Point(x, y) }
         } ?: throw ArgumentConversionException("Unable to convert to point.")
     }
 }

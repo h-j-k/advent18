@@ -7,7 +7,7 @@ object Day09 {
 
     fun getHighestScore(input: String) =
             "([1-9]\\d*) players; last marble is worth ([1-9]\\d*) points"
-                    .parseWith(input) { (players, lastPoint) ->
+                    .parseFor(input) { (players, lastPoint) ->
                         play(players.toInt(), lastPoint.toInt())
                     }
 
