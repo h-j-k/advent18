@@ -3,11 +3,14 @@ package com.ikueb.advent18
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
-inline fun <T> String.parseFor(input: CharSequence, mapper: (MatchResult.Destructured) -> T) =
-        (toRegex().matchEntire(input) ?: throw IllegalArgumentException("Wrong format."))
+inline fun <T> String.parseFor(input: CharSequence,
+                               mapper: (MatchResult.Destructured) -> T) =
+        (toRegex().matchEntire(input)
+                ?: throw IllegalArgumentException("Wrong format."))
                 .destructured.let(mapper)
 
-inline fun <T> List<CharSequence>.parseWith(pattern: String, mapper: (MatchResult.Destructured) -> T) =
+inline fun <T> List<CharSequence>.parseWith(pattern: String,
+                                            mapper: (MatchResult.Destructured) -> T) =
         map { pattern.parseFor(it, mapper) }
 
 fun <K, V> MutableMap<K, Set<V>>.mergeSetValues(key: K, value: V) =
@@ -27,3 +30,6 @@ fun <T> List<T?>.firstNonNull(): T? {
     forEach { if (it != null) return it }
     return null
 }
+
+fun <T> List<T>.lastIndexMatching(predicate: (T) -> Boolean) =
+        lastIndexOf(last(predicate))
