@@ -26,10 +26,16 @@ fun Boundary.getArea() = getWidth().toLong() * getHeight().toLong()
 
 fun Boundary.getOffset(target: Point) = target.x - first.x to target.y - first.y
 
+fun Boundary.offset(target: Point) = Point(target.x - first.x, target.y - first.y)
+
 fun Boundary.getEnclosingPoints() =
         (first.x..second.x)
                 .flatMap { x -> (first.y..second.y).map { y -> Point(x, y) } }
                 .toSet()
 
+fun Boundary.isOn(point: Point) =
+        point.x == first.x || point.x == second.x
+                || point.y == first.y || point.y == second.y
+
 fun Boundary.contains(point: Point) =
-        point.x == first.x || point.x == second.x || point.y == first.y || point.y == second.y
+        point.x in (first.x..second.x) && point.y in (first.y..second.y)

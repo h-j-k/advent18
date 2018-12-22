@@ -1,7 +1,7 @@
 package com.ikueb.advent18
 
 import com.ikueb.advent18.model.Point
-import com.ikueb.advent18.model.contains
+import com.ikueb.advent18.model.isOn
 import com.ikueb.advent18.model.getBoundary
 import com.ikueb.advent18.model.getEnclosingPoints
 
@@ -19,7 +19,7 @@ object Day06 {
                 }
                 .filterValues { it != null }
                 .flip()
-                .filterValues { closest -> closest.none(boundary::contains) }
+                .filterValues { closest -> closest.none(boundary::isOn) }
                 .map { it.value.size }
                 .maxBy { it }
                 ?: throw IllegalArgumentException("No results.")
