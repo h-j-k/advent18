@@ -6,6 +6,6 @@ abstract class InputToken(open var point: Point) {
 
     fun x() = point.x
     fun y() = point.y
-    fun atColumn(x: Int) = point.y == x
+    fun atColumn(x: Int) = point.x == x
     fun atRow(y: Int) = point.y == y
 }
