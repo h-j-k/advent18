@@ -30,84 +30,9 @@ object Day17 {
         val boundary: Boundary = getBoundary(setOf(source).union(veins.map { it.point }))
                 .let { (topLeft, bottomRight) -> topLeft.w() to bottomRight.e() }
         val base = ".".repeat(boundary.getWidth())
-        val state: Ground = (1..boundary.getHeight()).map { y ->
+        return (1..boundary.getHeight()).map { y ->
             Layer(veins.filter { it.atRow(y - 1) }.toSet(), base)
-        }
-        flow(state, boundary, source)
-        return state
-    }
-
-    private fun flow(state: Ground, boundary: Boundary, start: Point) {
-        val toProcess = ArrayDeque<Point>().apply { add(start) }
-        while (toProcess.isNotEmpty()) {
-            val now = toProcess.removeFirst()
-            val south = now.s()
-            if (!boundary.contains(south)
-                    || isFlowing(state, boundary, toProcess, south) { it }) continue
-            val veins = state[south.y].tokens().map { it.point }
-            val stillWater = state[south.y].additions
-                    .filter { it is StillWater }
-                    .map { it.point }
-            if (veins.any { it == south } || stillWater.any { it == south }) {
-                val flowEast = isFlowing(state, boundary, toProcess, now.e()) { it }
-                val flowWest = isFlowing(state, boundary, toProcess, now.w()) { it }
-                if (flowEast || flowWest) continue
-            }
-            if (hasSideWalls(state, boundary, now)) {
-                fillHorizontal(state, now)
-            }
-        }
-    }
-
-    private fun isFlowing(state: Ground,
-                          boundary: Boundary,
-                          toProcess: Deque<Point>,
-                          point: Point,
-                          toPrevious: (Point) -> Point): Boolean {
-        return if (boundary.contains(point) && state.nothingAt(point)) {
-            state.add(FlowingWater(point))
-            toProcess.addFirst(toPrevious(point))
-            toProcess.addFirst(point)
-            true
-        } else false
-    }
-
-    private fun hasSideWalls(state: Ground,
-                             boundary: Boundary,
-                             point: Point): Boolean =
-            hasSideWall(state, boundary, point) { it.e() }
-                    && hasSideWall(state, boundary, point) { it.w() }
-
-    private fun hasSideWall(state: Ground,
-                            boundary: Boundary,
-                            point: Point,
-                            toNext: (Point) -> Point): Boolean {
-        var now = point
-        while (boundary.contains(now)) {
-            with(state[now.y]) {
-                when (now) {
-                    in tokens().map { it.point } -> return true
-                    in additions.map { it.point } -> now = toNext(now)
-                    else -> return false
-                }
-            }
-        }
-        return false
-    }
-
-    private fun fillHorizontal(state: Ground, point: Point) {
-        fill(state, point) { it.e() }
-        fill(state, point) { it.w() }
-    }
-
-    private fun fill(state: Ground, point: Point, toNext: (Point) -> Point) {
-        var now = point
-        with(state[now.y]) {
-            while (tokens().none { it.point == now }) {
-                additions.add(StillWater(now))
-                now = toNext(now)
-            }
-        }
+        }.also { it.flow(boundary, source) }
     }
 }
 
@@ -118,10 +43,74 @@ private fun Layer.nothingAt(point: Point) =
 
 private typealias Ground = List<Layer>
 
-private fun Ground.nothingAt(point: Point) = this[point.y].nothingAt(point)
+private fun Ground.flow(boundary: Boundary, start: Point) {
+    val toProcess = ArrayDeque<Point>().apply { add(start) }
+    while (toProcess.isNotEmpty()) {
+        val now = toProcess.removeFirst()
+        val south = now.s()
+        if (!boundary.contains(south)
+                || isFlowing(boundary, toProcess, south) { it }) continue
+        val veins = this[south.y].tokens().map { it.point }
+        val stillWater = this[south.y].additions
+                .filter { it is StillWater }
+                .map { it.point }
+        if (veins.any { it == south } || stillWater.any { it == south }) {
+            val flowEast = isFlowing(boundary, toProcess, now.e()) { it }
+            val flowWest = isFlowing(boundary, toProcess, now.w()) { it }
+            if (flowEast || flowWest) continue
+        }
+        if (hasSideWalls(boundary, now)) {
+            fillHorizontal(now)
+        }
+    }
+}
 
-private fun <A : InputToken> Ground.add(addition: A) =
-        this[addition.y()].additions.add(addition)
+private fun Ground.isFlowing(boundary: Boundary,
+                             toProcess: Deque<Point>,
+                             point: Point,
+                             toPrevious: (Point) -> Point): Boolean {
+    return if (boundary.contains(point) && this[point.y].nothingAt(point)) {
+        this[point.y].additions.add(FlowingWater(point))
+        toProcess.addFirst(toPrevious(point))
+        toProcess.addFirst(point)
+        true
+    } else false
+}
+
+private fun Ground.hasSideWalls(boundary: Boundary, point: Point): Boolean =
+        hasSideWall(boundary, point) { it.e() }
+                && hasSideWall(boundary, point) { it.w() }
+
+private fun Ground.hasSideWall(boundary: Boundary,
+                               point: Point,
+                               toNext: (Point) -> Point): Boolean {
+    var now = point
+    while (boundary.contains(now)) {
+        with(this[now.y]) {
+            when (now) {
+                in tokens().map { it.point } -> return true
+                in additions.map { it.point } -> now = toNext(now)
+                else -> return false
+            }
+        }
+    }
+    return false
+}
+
+private fun Ground.fillHorizontal(point: Point) {
+    fill(point) { it.e() }
+    fill(point) { it.w() }
+}
+
+private fun Ground.fill(point: Point, toNext: (Point) -> Point) {
+    var now = point
+    with(this[now.y]) {
+        while (tokens().none { it.point == now }) {
+            additions.add(StillWater(now))
+            now = toNext(now)
+        }
+    }
+}
 
 private data class Clay(override var point: Point) : InputToken(point) {
     override fun isActive() = true
