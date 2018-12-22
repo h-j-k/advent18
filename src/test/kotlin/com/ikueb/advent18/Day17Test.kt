@@ -1,6 +1,7 @@
 package com.ikueb.advent18
 
 import com.ikueb.advent18.Day17.getWaterReach
+import com.ikueb.advent18.Day17.getWaterRetained
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -8,12 +9,22 @@ internal class Day17Test {
 
     @Test
     fun partOneExample() {
-        assertThat(getWaterReach(example, true)).isEqualTo(57)
+        assertThat(getWaterReach(example)).isEqualTo(57)
     }
 
     @Test
     fun partOne() {
         assertThat(getWaterReach(getInput("Day17"))).isEqualTo(38409)
+    }
+
+    @Test
+    fun partTwoExample() {
+        assertThat(getWaterRetained(example)).isEqualTo(29)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getWaterRetained(getInput("Day17"))).isEqualTo(32288)
     }
 
     private val example = listOf(

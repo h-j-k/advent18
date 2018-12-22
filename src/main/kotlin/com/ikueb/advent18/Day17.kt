@@ -1,15 +1,26 @@
 package com.ikueb.advent18
 
-import com.ikueb.advent18.Day17.source
 import com.ikueb.advent18.model.*
 import java.util.*
 
 object Day17 {
 
     private const val DEFINITION = "(.)=(\\d+), .=(\\d+)..(\\d+)"
-    internal val source = Point(500, 0)
+    private val source = Point(500, 0)
 
-    fun getWaterReach(input: List<String>, shouldRender: Boolean = false): Int {
+    fun getWaterReach(input: List<String>): Int {
+        val state = process(input)
+        val yMin = state.getTokens().minBy { it.y() }!!.y()
+        return state.flatMap { it.additions }
+                .distinctBy { it.point }
+                .count { it.y() >= yMin }
+    }
+
+    fun getWaterRetained(input: List<String>) = process(input)
+            .flatMap { it.additions }
+            .count { it is StillWater }
+
+    private fun process(input: List<String>): Ground {
         val veins = input.parseWith(DEFINITION) { (axis, a, b1, b2) ->
             when (axis) {
                 "x" -> (b1.toInt()..b2.toInt()).map { b -> Clay(Point(a.toInt(), b)) }
@@ -20,21 +31,13 @@ object Day17 {
                 .let { (topLeft, bottomRight) -> topLeft.w() to bottomRight.e() }
         val base = ".".repeat(boundary.getWidth())
         val state: Ground = (1..boundary.getHeight()).map { y ->
-            MutableInputLine<Clay, Water>(veins.filter { it.atRow(y - 1) }.toSet(), base)
+            Layer(veins.filter { it.atRow(y - 1) }.toSet(), base)
         }
         flow(state, boundary, source)
-        if (shouldRender) {
-            state.render(boundary).forEach { println(it) }
-        }
-        val yMin = veins.minBy { it.y() }!!.y()
-        return state.flatMap { it.additions }
-                .distinctBy { it.point }
-                .count { it.y() >= yMin }
+        return state
     }
 
-    private fun flow(state: Ground,
-                     boundary: Boundary,
-                     start: Point) {
+    private fun flow(state: Ground, boundary: Boundary, start: Point) {
         val toProcess = ArrayDeque<Point>().apply { add(start) }
         while (toProcess.isNotEmpty()) {
             val now = toProcess.removeFirst()
@@ -108,23 +111,17 @@ object Day17 {
     }
 }
 
-private fun MutableInputLine<Clay, Water>.nothingAt(point: Point) =
+private typealias Layer = MutableInputLine<Clay, Water>
+
+private fun Layer.nothingAt(point: Point) =
         tokens().none { it.point == point } && additions.none { it.point == point }
 
-private typealias Ground = List<MutableInputLine<Clay, Water>>
+private typealias Ground = List<Layer>
 
 private fun Ground.nothingAt(point: Point) = this[point.y].nothingAt(point)
 
 private fun <A : InputToken> Ground.add(addition: A) =
         this[addition.y()].additions.add(addition)
-
-private fun Ground.render(boundary: Boundary): List<String> =
-        mapIndexed { y, line ->
-            buildString {
-                append(line.render(boundary.first))
-                if (y == source.y) set(source.x - boundary.first.x, '+')
-            }
-        }
 
 private data class Clay(override var point: Point) : InputToken(point) {
     override fun isActive() = true
