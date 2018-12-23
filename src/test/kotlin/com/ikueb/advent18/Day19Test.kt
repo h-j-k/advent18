@@ -1,6 +1,6 @@
 package com.ikueb.advent18
 
-import com.ikueb.advent18.Day19.getRegisterValue
+import com.ikueb.advent18.Day19.getValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -8,12 +8,18 @@ internal class Day19Test {
 
     @Test
     fun partOneExample() {
-        assertThat(getRegisterValue(example)).isEqualTo(6)
+        assertThat(getValue(example)).isEqualTo(6)
     }
 
     @Test
     fun partOne() {
-        assertThat(getRegisterValue(getInput("Day19"))).isEqualTo(1764)
+        assertThat(getValue(getInput("Day19"))).isEqualTo(1764)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getValue(getInput("Day19"), mutableListOf(1, 0, 0, 0, 0, 0)))
+                .isEqualTo(18992484)
     }
 
     private val example = listOf(
