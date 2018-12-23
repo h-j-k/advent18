@@ -8,12 +8,17 @@ internal class Day18Test {
 
     @Test
     fun partOneExample() {
-        assertThat(getResourceValue(example)).isEqualTo(1147)
+        assertThat(getResourceValue(example, 10)).isEqualTo(1147)
     }
 
     @Test
     fun partOne() {
-        assertThat(getResourceValue(getInput("Day18"))).isEqualTo(737800)
+        assertThat(getResourceValue(getInput("Day18"), 10)).isEqualTo(737800)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getResourceValue(getInput("Day18"), 1000000000)).isEqualTo(212040)
     }
 
     private val example = listOf(

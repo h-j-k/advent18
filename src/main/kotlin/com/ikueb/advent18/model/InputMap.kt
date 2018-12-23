@@ -2,7 +2,8 @@ package com.ikueb.advent18.model
 
 typealias InputMap<T> = List<LineWithToken<T>>
 
-fun <T : InputToken> InputMap<T>.getTokens(): InputTokens<T> = flatMap { it.tokens() }.toSet()
+fun <T : InputToken> InputMap<T>.getTokens(): InputTokens<T> =
+        flatMap { it.tokens() }.toSet()
 
 fun <T : InputToken> InputMap<T>.at(point: Point) = this[point.y].at(point.x)
 
@@ -11,3 +12,6 @@ fun <T : InputToken> List<String>.asInputMap(tokenProcessor: (Int, String) -> Se
         this.mapIndexed { i, line ->
             InputLine(tokenProcessor(i, line), baseProcessor(line))
         }
+
+fun <T : InputToken> InputMap<T>.render(offset: Point = Point(0, 0)): List<String> =
+        map { it.render(offset) }

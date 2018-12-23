@@ -10,6 +10,6 @@ data class InputLine<T : InputToken>(val tokens: Set<T>, val base: String) : Lin
 
     override fun render(offset: Point) = buildString {
         append(base)
-        tokens.forEach { setCharAt(it.x() - offset.x, it.toString()[0]) }
+        append(tokens.sortedBy { it.point }.joinToString("") { it.toString() })
     }
 }
