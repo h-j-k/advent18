@@ -1,5 +1,7 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.model.opcodes
+
 object Day16 {
 
     fun likelyOpcodes(input: List<String>): Int {
@@ -53,7 +55,7 @@ object Day16 {
         if (sample.size != 4) return -1 to emptySet()
         val before = "Before: \\[(\\d), (\\d), (\\d), (\\d)\\]".parseFor(
                 sample[0]) { (a, b, c, d) ->
-            listOf(a.toInt(), b.toInt(), c.toInt(), d.toInt())
+            mutableListOf(a.toInt(), b.toInt(), c.toInt(), d.toInt())
         }
         val (n, a, b, c) = "(\\d+) (\\d) (\\d) (\\d)".parseFor(
                 sample[1]) { (n, a, b, c) ->
@@ -68,30 +70,3 @@ object Day16 {
         }.keys
     }
 }
-
-private typealias RegisterState = List<Int>
-
-private typealias Opcode = (RegisterState, Int, Int) -> Int
-
-private val addr: Opcode = { state, a, b -> state[a] + state[b] }
-private val addi: Opcode = { state, a, b -> state[a] + b }
-private val mulr: Opcode = { state, a, b -> state[a] * state[b] }
-private val muli: Opcode = { state, a, b -> state[a] * b }
-private val banr: Opcode = { state, a, b -> state[a] and state[b] }
-private val bani: Opcode = { state, a, b -> state[a] and b }
-private val borr: Opcode = { state, a, b -> state[a] or state[b] }
-private val bori: Opcode = { state, a, b -> state[a] or b }
-private val setr: Opcode = { state, a, _ -> state[a] }
-private val seti: Opcode = { _, a, _ -> a }
-private val gtir: Opcode = { state, a, b -> if (a > state[b]) 1 else 0 }
-private val gtri: Opcode = { state, a, b -> if (state[a] > b) 1 else 0 }
-private val gtrr: Opcode = { state, a, b -> if (state[a] > state[b]) 1 else 0 }
-private val eqir: Opcode = { state, a, b -> if (a == state[b]) 1 else 0 }
-private val eqri: Opcode = { state, a, b -> if (state[a] == b) 1 else 0 }
-private val eqrr: Opcode = { state, a, b -> if (state[a] == state[b]) 1 else 0 }
-
-private val opcodes = mapOf(
-        "addr" to addr, "addi" to addi, "mulr" to mulr, "muli" to muli,
-        "banr" to banr, "bani" to bani, "borr" to borr, "bori" to bori,
-        "setr" to setr, "seti" to seti, "gtir" to gtir, "gtri" to gtri,
-        "gtrr" to gtrr, "eqir" to eqir, "eqri" to eqri, "eqrr" to eqrr)
