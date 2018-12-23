@@ -10,61 +10,37 @@ object Day18 {
                 Acre(Point(x, y), Content.parse(value))
             }.toSet(), "")
         }
-        val boundary = getBoundary(state.getTokens().map { it.point })
         val seen = mutableMapOf<Int, Int>()
         var matched: Int?
         do {
-            step(state, boundary)
+            state.step()
             matched = seen.put(state.render().hashCode(), seen.size)
         } while (matched == null && seen.size < iterations)
         if (seen.size < iterations) {
             val current = seen[state.render().hashCode()]!!
             repeat(((iterations - matched!!) % (current - matched)) - 1) {
-                step(state, boundary)
+                state.step()
             }
         }
-        return state.getTokens()
-                .groupBy { it.content }
+        return state.getTokens().groupBy { it.content }
                 .let { it[Content.TREES]!!.size * it[Content.LUMBERYARD]!!.size }
     }
-
-    private fun step(state: Area, boundary: Boundary) {
-        state.getTokens()
-                .associateBy { it.point }
-                .mapValues { (_, acre) -> next(state, boundary, acre) }
-                .forEach { point, content -> state.get(point).content = content }
-    }
-
-    private fun next(state: Area,
-                     boundary: Boundary,
-                     acre: Acre) = when (val now = acre.content) {
-        Content.OPEN ->
-            if (matches(state, boundary, acre, 3, Content.TREES)) Content.TREES
-            else now
-        Content.TREES ->
-            if (matches(state, boundary, acre, 3, Content.LUMBERYARD)) Content.LUMBERYARD
-            else now
-        Content.LUMBERYARD ->
-            if (matches(state, boundary, acre, 1, Content.LUMBERYARD)
-                    && matches(state, boundary, acre, 1, Content.TREES)) Content.LUMBERYARD
-            else Content.OPEN
-    }
-
-    private fun matches(state: Area,
-                        boundary: Boundary,
-                        acre: Acre,
-                        min: Int,
-                        targetContent: Content) =
-            acre.point.adjacent
-                    .filter { boundary.contains(it) }
-                    .count { state.get(it).content == targetContent } >= min
-
 }
 
 private typealias Area = InputMap<Acre>
 
+private fun Area.step() = getTokens()
+        .associateBy { it.point }
+        .mapValues { (_, acre) -> acre.next(this) }
+        .forEach { point, content -> get(point)?.content = content }
+
+private fun Area.near(acre: Acre, min: Int, target: Content) =
+        acre.point.adjacent.count { get(it)?.content == target } >= min
+
 private fun Area.get(point: Point) =
-        this[point.y].tokens().first { it.atColumn(point.x) }
+        if (point.y in 0..(size - 1)) {
+            this[point.y].tokens().firstOrNull { it.atColumn(point.x) }
+        } else null
 
 private data class Acre(
         override var point: Point,
@@ -73,6 +49,19 @@ private data class Acre(
     override fun isActive() = true
 
     override fun toString() = content.output.toString()
+
+    fun next(state: Area) = when (val now = content) {
+        Content.OPEN ->
+            if (state.near(this, 3, Content.TREES)) Content.TREES
+            else now
+        Content.TREES ->
+            if (state.near(this, 3, Content.LUMBERYARD)) Content.LUMBERYARD
+            else now
+        Content.LUMBERYARD ->
+            if (state.near(this, 1, Content.LUMBERYARD)
+                    && state.near(this, 1, Content.TREES)) Content.LUMBERYARD
+            else Content.OPEN
+    }
 }
 
 private enum class Content(val output: Char) {
