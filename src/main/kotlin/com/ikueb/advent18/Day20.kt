@@ -12,7 +12,13 @@ object Day20 {
             'W' to Point::w
     )
 
-    fun getPassMostDoors(input: String): Int {
+    fun getPassMostDoors(input: String) =
+            process(input).maxBy { it.value }!!.value
+
+    fun getPassThrough(input: String, min: Int = 1000) =
+            process(input).count { it.value >= min }
+
+    private fun process(input: String): MutableMap<Point, Int> {
         var current = Point(0, 0)
         val grid = mutableMapOf(current to 0)
         val stack = ArrayDeque<Point>()
@@ -24,10 +30,11 @@ object Day20 {
                 in movements -> {
                     val nextDistance = grid.getValue(current) + 1
                     current = movements.getValue(it).invoke(current, 1)
-                    grid[current] = minOf(grid.getOrDefault(current, Int.MAX_VALUE), nextDistance)
+                    grid[current] = minOf(grid.getOrDefault(current, Int.MAX_VALUE),
+                            nextDistance)
                 }
             }
         }
-        return grid.maxBy { it.value }!!.value
+        return grid
     }
 }
