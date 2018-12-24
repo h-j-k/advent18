@@ -7,8 +7,7 @@ object Day05 {
     fun getShortestPossible(input: String) = CharRange('a', 'z')
             .map { input.replace(it.toString(), "", true) }
             .parallelMap { process(it) }
-            .minBy { it.length }?.length
-            ?: throw IllegalArgumentException("No results.")
+            .minBy { it.length }!!.length
 
     private fun process(input: String): String {
         if (input.length < 2) {
@@ -33,9 +32,6 @@ object Day05 {
     }
 
     private fun processTriplet(triplet: String): Pair<Boolean, String> {
-        if (triplet.length != 3) {
-            throw IllegalArgumentException("Expecting three-letter input.")
-        }
         val (x, y, z) = triplet.toCharArray()
         return if (x.isOppositeAscii(y)) {
             if (y.isOppositeAscii(z)) true to "" else true to z.toString()

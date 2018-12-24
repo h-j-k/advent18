@@ -28,4 +28,12 @@ internal class Day05Test {
         val input = getInput("Day05").joinToString("")
         assertThat(getShortestPossible(input)).isEqualTo(6650)
     }
+
+    @Test
+    fun edgeCases() {
+        assertThat(getShortestPossible("")).isEqualTo(0)
+        assertThat(getShortestPossible("aA")).isEqualTo(0)
+        assertThat(getShortestPossible("ab")).isEqualTo(1)
+        assertThat(getShortestPossible(" ")).isEqualTo(1)
+    }
 }

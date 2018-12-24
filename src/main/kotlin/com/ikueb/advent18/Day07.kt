@@ -58,11 +58,11 @@ data class ElfWorkers(val total: Int, val effort: (String) -> Int) {
               toProcess: MutableSet<String>): List<String> {
         val done = mutableListOf<String>()
         workload.keys.toSet().forEach { key ->
-            workload.computeAndProcess(key, { _, value ->
+            workload.updateAndIfNull(key, { _, value ->
                 if (value == 1) null else value - 1
             }, {
                 (dependents[key] ?: mutableListOf()).forEach { dependent ->
-                    dependencies.computeAndProcess(dependent, { _, value ->
+                    dependencies.updateAndIfNull(dependent, { _, value ->
                         value.remove(key)
                         if (value.isEmpty()) null else value
                     }, { toProcess.add(dependent) })
@@ -75,8 +75,8 @@ data class ElfWorkers(val total: Int, val effort: (String) -> Int) {
     }
 }
 
-private fun <K, V> MutableMap<K, V>.computeAndProcess(key: K,
-                                                      remapping: (K, V) -> V?,
-                                                      processor: () -> Unit) {
+private fun <K, V> MutableMap<K, V>.updateAndIfNull(key: K,
+                                                    remapping: (K, V) -> V?,
+                                                    processor: () -> Unit) {
     computeIfPresent(key, remapping).let { if (it == null) processor() }
 }

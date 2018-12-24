@@ -2,6 +2,7 @@ package com.ikueb.advent18
 
 import com.ikueb.advent18.model.Point
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.Test
 
 internal class UtilsTest {
@@ -13,9 +14,23 @@ internal class UtilsTest {
     }
 
     @Test
+    fun cannotParseFromInvalidString() {
+        assertThatIllegalArgumentException()
+                .isThrownBy { "(.)".parseFor("") { (x) -> x } }
+                .withMessage("Wrong format.")
+    }
+
+    @Test
     fun canParseFromList() {
         val actual = listOf("1,2").parseWith("(\\d+),(\\d+)") { (x, y) -> Point(x, y) }
         assertThat(actual).contains(Point(1, 2))
+    }
+
+    @Test
+    fun cannotParseFromInvalidList() {
+        assertThatIllegalArgumentException()
+                .isThrownBy { listOf("", " ").parseWith("(.)") { (x) -> x } }
+                .withMessage("Wrong format.")
     }
 
     @Test
