@@ -24,3 +24,4 @@ https://todd.ginsberg.com/post/advent-of-code/2018/
 * Day 15 (path generation)
 * Day 17 (water propagation)
 * Day 19 (part 2 tip)
+* Day 20 (path generation)
