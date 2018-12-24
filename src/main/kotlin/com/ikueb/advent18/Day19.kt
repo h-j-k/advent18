@@ -25,7 +25,7 @@ object Day19 {
                 target = registerState.max()!!
                 break
             }
-            next = pointer.update(registerState[pointer.binding])
+            next = pointer.update(registerState)
         }
         if (isPartTwo) {
             registerState[0] = (1..target)

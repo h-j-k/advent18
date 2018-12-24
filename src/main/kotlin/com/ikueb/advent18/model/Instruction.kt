@@ -6,9 +6,12 @@ data class Instruction(val opcode: String, val a: Int, val b: Int, val c: Int) {
     }
 }
 
-data class InstructionPointer(val binding: Int, var value: Int = 0) {
-    fun update(newValue: Int): Int {
-        value = newValue + 1
+data class InstructionPointer(val binding: Int) {
+
+    private var value = 0
+
+    fun update(registerState: RegisterState): Int {
+        value = registerState[binding] + 1
         return value
     }
 }

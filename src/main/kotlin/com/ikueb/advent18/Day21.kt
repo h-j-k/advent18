@@ -6,7 +6,11 @@ import com.ikueb.advent18.model.RegisterState
 
 object Day21 {
 
-    fun getHaltingValue(input: List<String>): Int {
+    fun getHaltingValueForFewest(input: List<String>) = getHaltingValue(input).first()
+
+    fun getHaltingValueForMost(input: List<String>) = getHaltingValue(input).last()
+
+    private fun getHaltingValue(input: List<String>): Sequence<Int> {
         val pointer = InstructionPointer(
                 "#ip (\\d+)".parseFor(input[0]) { (i) -> i.toInt() })
         val instructions = input.drop(1).map {
@@ -24,7 +28,7 @@ object Day21 {
             while (next in 0..(instructions.size - 1)) {
                 registerState[pointer.binding] = next
                 instructions[next].invoke(registerState)
-                next = pointer.update(registerState[pointer.binding])
+                next = pointer.update(registerState)
                 if (next == targetInstruction) {
                     if (!seen.add(registerState[targetRegister])) {
                         yield(seen.last())
@@ -32,7 +36,7 @@ object Day21 {
                     } else yield(registerState[targetRegister])
                 }
             }
-        }.first()
+        }
     }
 }
 
