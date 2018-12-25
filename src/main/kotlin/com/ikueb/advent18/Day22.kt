@@ -22,22 +22,16 @@ object Day22 {
             if (current.at.point == target && current.using == Tool.TORCH) {
                 return current.cost
             }
-            val nextSteps = mutableListOf<CaveStep>()
-            current.at.point.orderedCardinal
-                    .filter { it.isPositive() }
-                    .map { Region(it, cave) }
-                    .forEach {
-                        if (current.using in it.toolsRequired()) {
-                            nextSteps += current.copy(
-                                    at = it,
-                                    cost = current.cost + 1
-                            )
-                        }
-                    }
-            current.at.toolsRequired().minus(current.using).forEach {
-                nextSteps += CaveStep(current.at, it, current.cost + 7)
-            }
-            nextSteps.forEach {
+            mutableListOf<CaveStep>().apply {
+                current.at.point.orderedCardinal
+                        .filter { it.isPositive() }
+                        .map { Region(it, cave) }
+                        .filter { current.using in it.toolsRequired() }
+                        .forEach { add(current.copy(at = it, cost = current.cost + 1)) }
+                current.at.toolsRequired()
+                        .minus(current.using)
+                        .forEach { add(CaveStep(current.at, it, current.cost + 7)) }
+            }.forEach {
                 val existing = seenShortest[it.asKey]
                 seenShortest.merge(it.asKey, it.cost) { known, current ->
                     minOf(known, current)
