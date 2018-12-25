@@ -23,7 +23,7 @@ internal class Day22Test {
         assertThat(getShortestTimeTo(510, Point(10, 10))).isEqualTo(45)
     }
 
-    // slow test only when running all tests, why?
+    // slow only when running all tests, suspected deadlock due to lazy delegation
     fun partTwo() {
         assertThat(getShortestTimeTo(9171, Point(7, 721))).isEqualTo(986)
     }

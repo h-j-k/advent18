@@ -14,19 +14,19 @@ object Day22 {
 
     fun getShortestTimeTo(depth: Int, target: Point): Int {
         val cave = HardCave(depth, target)
-        val start = cave.at(Point(0, 0)).let { CaveStep(it, it.toolsRequired.first()) }
+        val start = cave.at(Point(0, 0)).let { CaveStep(it, it.toolsRequired().first()) }
         val seenShortest = mutableMapOf(start.asKey to start.cost)
         val stepsRemaining = PriorityQueue<CaveStep>().apply { add(start) }
         while (stepsRemaining.isNotEmpty()) {
-            with(stepsRemaining.poll()) {
-                if (at.point == target && using == Tool.TORCH) {
-                    return cost
-                }
-                generateSteps(cave).forEach {
-                    val existing = seenShortest[it.asKey]
-                    seenShortest.merge(it.asKey, it.cost) { known, current ->
-                        minOf(known, current)
-                    }.let { updated -> if (existing != updated) stepsRemaining += it }
+            val step = stepsRemaining.poll()
+            if (step.at.point == target && step.using == Tool.TORCH) {
+                return step.cost
+            }
+            step.generateSteps(cave).forEach {
+                val existing = seenShortest[it.asKey]
+                if (existing == null || it.cost < existing) {
+                    seenShortest[it.asKey] = it.cost
+                    stepsRemaining += it
                 }
             }
         }
@@ -39,19 +39,18 @@ private data class Region(val point: Point, val cave: HardCave) {
     val geologicIndex: Int by lazy { deriveGeologicIndex() }
     val erosionLevel: Int by lazy { (geologicIndex + cave.depth) % 20183 }
     val regionType: RegionType by lazy { RegionType.values()[erosionLevel % 3] }
-    val riskLevel: Int by lazy { regionType.riskLevel }
-    val toolsRequired: Set<Tool> by lazy { deriveToolsRequired() }
 
-    private val atEnds: Boolean by lazy { point in setOf(Point(0, 0), cave.target) }
+    private val atEnds = point in setOf(Point(0, 0), cave.target)
 
     private fun deriveGeologicIndex() = when {
         atEnds -> 0
         point.y == 0 -> point.x * 16807
         point.x == 0 -> point.y * 48271
-        else -> cave.at(point.w()).erosionLevel * cave.at(point.n()).erosionLevel
+        else -> (cave.at(point.w()) to cave.at(point.n()))
+                .let { it.first.erosionLevel * it.second.erosionLevel }
     }
 
-    private fun deriveToolsRequired(): Set<Tool> = if (atEnds) setOf(Tool.TORCH) else
+    fun toolsRequired(): Set<Tool> = if (atEnds) setOf(Tool.TORCH) else
         when (regionType) {
             RegionType.ROCKY -> setOf(Tool.CLIMBING_GEAR, Tool.TORCH)
             RegionType.WET -> setOf(Tool.CLIMBING_GEAR, Tool.NEITHER)
@@ -63,11 +62,9 @@ private data class HardCave(val depth: Int, val target: Point) {
 
     private val state = mutableMapOf<Point, Region>()
 
-    fun at(point: Point) = state.computeIfAbsent(point) { incoming ->
-        Region(incoming, this)
-    }
+    fun at(point: Point) = state.getOrPut(point) { Region(point, this) }
 
-    fun getTotalRiskRiskLevel() = state.values.sumBy { it.riskLevel }
+    fun getTotalRiskRiskLevel() = state.values.sumBy { it.regionType.riskLevel }
 }
 
 private data class CaveStep(val at: Region, val using: Tool, val cost: Int = 0) :
@@ -77,15 +74,17 @@ private data class CaveStep(val at: Region, val using: Tool, val cost: Int = 0) 
 
     override fun compareTo(other: CaveStep) = cost.compareTo(other.cost)
 
-    fun generateSteps(cave: HardCave) = stepSameTools(cave).union(stepOtherTools())
+    fun generateSteps(cave: HardCave) = stepSameTools(cave) + stepOtherTools()
 
     private fun stepSameTools(cave: HardCave) = at.point.orderedCardinal
+            .asSequence()
             .filter { it.isPositive() }
             .map { Region(it, cave) }
-            .filter { using in it.toolsRequired }
+            .filter { using in it.toolsRequired() }
             .map { CaveStep(it, using, cost + 1) }
 
-    private fun stepOtherTools() = at.toolsRequired.minus(using)
+    private fun stepOtherTools() = at.toolsRequired().minus(using)
+            .asSequence()
             .map { CaveStep(at, it, cost + 7) }
 }
 
