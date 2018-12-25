@@ -55,7 +55,7 @@ private fun Cave.isOpen(point: Point) =
         at(point) == '.' && getTokens().active().none { it.point == point }
 
 private fun Point.orderedOpenCardinals(state: Cave) =
-        listOf(n(), w(), e(), s()).filter(state::isOpen)
+        orderedCardinal.filter(state::isOpen)
 
 private typealias Players = InputTokens<Player>
 

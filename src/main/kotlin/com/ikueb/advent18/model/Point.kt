@@ -4,6 +4,7 @@ data class Point(val x: Int, val y: Int) : Comparable<Point> {
     constructor(x: String, y: String) : this(x.trim().toInt(), y.trim().toInt())
 
     val adjacent: Set<Point> by lazy { setOf(nw(), n(), ne(), w(), e(), sw(), s(), se()) }
+    val orderedCardinal: List<Point> by lazy { listOf(n(), w(), e(), s()) }
 
     fun manhattanDistance(other: Point) = Math.abs(x - other.x) + Math.abs(y - other.y)
     fun nw(offset: Int = 1) = Point(x - offset, y - offset)
@@ -17,4 +18,6 @@ data class Point(val x: Int, val y: Int) : Comparable<Point> {
 
     override fun compareTo(other: Point) =
             compareBy<Point>({ it.y }, { it.x }).compare(this, other)
+
+    fun isPositive() = x >= 0 && y >= 0
 }

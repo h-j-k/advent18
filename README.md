@@ -26,3 +26,4 @@ https://todd.ginsberg.com/post/advent-of-code/2018/
 * Day 19 (part 2 tip)
 * Day 20 (path generation)
 * Day 21 (logic)
+* Day 22 (part 2 tip)
