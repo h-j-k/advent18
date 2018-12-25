@@ -23,7 +23,7 @@ internal class Day22Test {
         assertThat(getShortestTimeTo(510, Point(10, 10))).isEqualTo(45)
     }
 
-    @Test
+    // slow test only when running all tests, why?
     fun partTwo() {
         assertThat(getShortestTimeTo(9171, Point(7, 721))).isEqualTo(986)
     }

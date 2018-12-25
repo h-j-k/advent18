@@ -14,7 +14,7 @@ object Day22 {
 
     fun getShortestTimeTo(depth: Int, target: Point): Int {
         val cave = HardCave(depth, target)
-        val start = cave.at(Point(0, 0)).let { CaveStep(it, it.toolsRequired().first()) }
+        val start = cave.at(Point(0, 0)).let { CaveStep(it, it.toolsRequired.first()) }
         val seenShortest = mutableMapOf(start.asKey to start.cost)
         val stepsRemaining = PriorityQueue<CaveStep>().apply { add(start) }
         while (stepsRemaining.isNotEmpty()) {
@@ -40,6 +40,7 @@ private data class Region(val point: Point, val cave: HardCave) {
     val erosionLevel: Int by lazy { (geologicIndex + cave.depth) % 20183 }
     val regionType: RegionType by lazy { RegionType.values()[erosionLevel % 3] }
     val riskLevel: Int by lazy { regionType.riskLevel }
+    val toolsRequired: Set<Tool> by lazy { deriveToolsRequired() }
 
     private val atEnds: Boolean by lazy { point in setOf(Point(0, 0), cave.target) }
 
@@ -50,7 +51,7 @@ private data class Region(val point: Point, val cave: HardCave) {
         else -> cave.at(point.w()).erosionLevel * cave.at(point.n()).erosionLevel
     }
 
-    fun toolsRequired(): Set<Tool> = if (atEnds) setOf(Tool.TORCH) else
+    private fun deriveToolsRequired(): Set<Tool> = if (atEnds) setOf(Tool.TORCH) else
         when (regionType) {
             RegionType.ROCKY -> setOf(Tool.CLIMBING_GEAR, Tool.TORCH)
             RegionType.WET -> setOf(Tool.CLIMBING_GEAR, Tool.NEITHER)
@@ -81,10 +82,10 @@ private data class CaveStep(val at: Region, val using: Tool, val cost: Int = 0) 
     private fun stepSameTools(cave: HardCave) = at.point.orderedCardinal
             .filter { it.isPositive() }
             .map { Region(it, cave) }
-            .filter { using in it.toolsRequired() }
+            .filter { using in it.toolsRequired }
             .map { CaveStep(it, using, cost + 1) }
 
-    private fun stepOtherTools() = at.toolsRequired().minus(using)
+    private fun stepOtherTools() = at.toolsRequired.minus(using)
             .map { CaveStep(at, it, cost + 7) }
 }
 
