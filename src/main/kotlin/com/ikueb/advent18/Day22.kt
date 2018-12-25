@@ -18,24 +18,16 @@ object Day22 {
         val seenShortest = mutableMapOf(start.asKey to start.cost)
         val stepsRemaining = PriorityQueue<CaveStep>().apply { add(start) }
         while (stepsRemaining.isNotEmpty()) {
-            val current = stepsRemaining.poll()
-            if (current.at.point == target && current.using == Tool.TORCH) {
-                return current.cost
-            }
-            mutableListOf<CaveStep>().apply {
-                current.at.point.orderedCardinal
-                        .filter { it.isPositive() }
-                        .map { Region(it, cave) }
-                        .filter { current.using in it.toolsRequired() }
-                        .forEach { add(current.copy(at = it, cost = current.cost + 1)) }
-                current.at.toolsRequired()
-                        .minus(current.using)
-                        .forEach { add(CaveStep(current.at, it, current.cost + 7)) }
-            }.forEach {
-                val existing = seenShortest[it.asKey]
-                seenShortest.merge(it.asKey, it.cost) { known, current ->
-                    minOf(known, current)
-                }.let { updated -> if (existing != updated) stepsRemaining += it }
+            with(stepsRemaining.poll()) {
+                if (at.point == target && using == Tool.TORCH) {
+                    return cost
+                }
+                generateSteps(cave).forEach {
+                    val existing = seenShortest[it.asKey]
+                    seenShortest.merge(it.asKey, it.cost) { known, current ->
+                        minOf(known, current)
+                    }.let { updated -> if (existing != updated) stepsRemaining += it }
+                }
             }
         }
         return -1
@@ -83,6 +75,17 @@ private data class CaveStep(val at: Region, val using: Tool, val cost: Int = 0) 
     val asKey: Pair<Region, Tool> by lazy { at to using }
 
     override fun compareTo(other: CaveStep) = cost.compareTo(other.cost)
+
+    fun generateSteps(cave: HardCave) = stepSameTools(cave).union(stepOtherTools())
+
+    private fun stepSameTools(cave: HardCave) = at.point.orderedCardinal
+            .filter { it.isPositive() }
+            .map { Region(it, cave) }
+            .filter { using in it.toolsRequired() }
+            .map { CaveStep(it, using, cost + 1) }
+
+    private fun stepOtherTools() = at.toolsRequired().minus(using)
+            .map { CaveStep(at, it, cost + 7) }
 }
 
 private enum class RegionType {
