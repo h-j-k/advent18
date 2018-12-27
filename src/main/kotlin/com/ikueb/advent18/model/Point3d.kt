@@ -6,4 +6,13 @@ data class Point3d(val x: Int, val y: Int, val z: Int) {
 
     fun manhattanDistance(other: Point3d) =
             listOf(x - other.x, y - other.y, z - other.z).sumBy { Math.abs(it) }
+
+    fun adjacent(offset: Int) =
+            (-1..1).flatMap { a ->
+                (-1..1).flatMap { b ->
+                    (-1..1).map { c ->
+                        Point3d(x + a * offset, y + b * offset, z + c * offset)
+                    }
+                }
+            }
 }

@@ -27,3 +27,5 @@ https://todd.ginsberg.com/post/advent-of-code/2018/
 * Day 20 (path generation)
 * Day 21 (logic)
 * Day 22 (part 2 tip)
+
+Special hat-tip to https://github.com/ephemient/aoc2018 for Day 23 part 2!
