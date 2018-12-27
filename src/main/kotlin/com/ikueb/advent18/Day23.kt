@@ -2,7 +2,6 @@ package com.ikueb.advent18
 
 import com.ikueb.advent18.model.Point3d
 import kotlin.math.abs
-import kotlin.math.max
 
 object Day23 {
 
@@ -14,26 +13,18 @@ object Day23 {
 
     fun getMostCommonAndClosest(input: List<String>): Int {
         val nanobots = nanobots(input)
+        var range = maxOf(nanobots.deltaBy { point.x },
+                nanobots.deltaBy { point.y }, nanobots.deltaBy { point.z })
         val origin = Point3d(0, 0, 0)
-        var currentRadius = max(nanobots.deltaBy { point.x },
-                max(nanobots.deltaBy { point.y }, nanobots.deltaBy { point.z }))
-        var currentBots = setOf(Nanobot(origin, currentRadius))
-        while (currentRadius > 0) {
-            currentRadius = (currentRadius / 2) + if (currentRadius > 2) 1 else 0
-            val next = currentBots.flatMap { bot ->
-                bot.point.adjacent(currentRadius).map { point ->
-                    Nanobot(point, currentRadius)
-                            .let { bot ->
-                                bot to nanobots.count { bot.inTotalRangeTo(it) }
-                            }
-                }
-            }
-            val maxDistance = next.map { it.second }.max() ?: 0
-            currentBots = next.filter { it.second == maxDistance }
-                    .map { it.first }
-                    .toSet()
+        var candidates = setOf(Nanobot(origin, range))
+        while (range > 0) {
+            range = (range / 2) + if (range > 2) 1 else 0
+            candidates = candidates.flatMap {
+                it.point.adjacent(range).map { point -> Nanobot(point, range) }
+            }.groupBy { bot -> nanobots.count { bot.inTotalRangeTo(it) } }
+                    .maxBy { it.key }!!.value.toSet()
         }
-        return currentBots.minBy { origin.manhattanDistance(it.point) }!!.point.manhattanDistance(origin)
+        return candidates.map { it.point.manhattanDistance(origin) }.min()!!
     }
 
     private fun nanobots(input: List<String>) =
@@ -50,7 +41,5 @@ private data class Nanobot(val point: Point3d, val radius: Int) {
             point.manhattanDistance(other.point) <= radius + other.radius
 }
 
-private inline fun <T> Iterable<T>.deltaBy(block: T.() -> Int): Int {
-    val values = map(block)
-    return abs((values.max() ?: 0) - (values.min() ?: 0))
-}
+private inline fun <T> List<T>.deltaBy(block: T.() -> Int) =
+        with(map(block)) { abs((max() ?: 0) - (min() ?: 0)) }
