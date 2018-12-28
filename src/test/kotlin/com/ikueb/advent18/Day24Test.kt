@@ -1,5 +1,6 @@
 package com.ikueb.advent18
 
+import com.ikueb.advent18.Day24.getWinningImmuneUnits
 import com.ikueb.advent18.Day24.getWinningUnits
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,8 +14,12 @@ internal class Day24Test {
 
     @Test
     fun partOne() {
-        // 35558 too low
         assertThat(getWinningUnits(getInput("Day24"))).isEqualTo(35947)
+    }
+
+    @Test
+    fun partTwo() {
+        assertThat(getWinningImmuneUnits(getInput("Day24"))).isEqualTo(1105)
     }
 
     private val example = listOf(
