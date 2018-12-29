@@ -34,9 +34,9 @@ private data class Point4d(val a: Int, val b: Int, val c: Int, val d: Int) {
     constructor(a: String, b: String, c: String, d: String) :
             this(a.trim().toInt(), b.trim().toInt(), c.trim().toInt(), d.trim().toInt())
 
-    fun manhattanDistance(other: Point4d) =
+    fun isNearby(other: Point4d) = this != other && manhattanDistance(other) <= 3
+
+    private fun manhattanDistance(other: Point4d) =
             listOf(a - other.a, b - other.b, c - other.c, d - other.d)
                     .sumBy { Math.abs(it) }
-
-    fun isNearby(other: Point4d) = this != other && manhattanDistance(other) <= 3
 }
