@@ -55,7 +55,7 @@ sonarqube {
 jacocoTestReport {
     reports {
         xml.enabled true
-        html.enabled false
+        html.enabled true
         xml.destination file("$buildDir/reports/jacoco/test/jacoco.xml")
     }
 }

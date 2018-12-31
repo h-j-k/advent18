@@ -15,6 +15,7 @@ data class MutableInputLine<T : InputToken, A : InputToken>(
 
     override fun render(offset: Point) = buildString {
         append(inputLine.render(offset))
+        setLength(1 + additions.map { it.x() }.max()!!)
         additions.forEach { setCharAt(it.x() - offset.x, it.toString()[0]) }
     }
 }
